@@ -87,7 +87,7 @@ method refresh<S,A>(&State<S,A> st):
     if old is null:
         st->root->appendChild(tree)
     else:
-        st->root->replaceChild(old,tree)
+        st->root->replaceChild(tree,old)
     // Assign tree
     st->tree = tree
 
