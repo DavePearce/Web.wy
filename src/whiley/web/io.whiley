@@ -5,6 +5,21 @@ import string from js::core
 import w3c::ajax with XMLHttpRequest, newXMLHttpRequest, DONE
 import web::app
 
+// ==========================================================
+// Aliases
+// ==========================================================
+
+public type State<S> is app::State<S,Action<S> >
+
+/**
+ * Binds app to I/O Actions
+ */
+public type App<S> is app::App<S,Action<S> >
+
+// ==========================================================
+// Actions
+// ==========================================================
+
 /**
  * Type of response handlers for OK
  */
@@ -53,13 +68,11 @@ type m_int is method(int)
 // Action Processor
 // ==========================================================
 
-public type State<S> is app::State<S,Action<S> >
-
 /**
  * Process Input / Output actions.  For example, begin any HTTP
  * requests as necessary.
  */
-method process<S>(&State<S> st, Action<S> action):
+public method processor<S>(&State<S> st, Action<S> action):
     //
     if action is Get<S>:
         process_request<S>(st,action)
@@ -96,7 +109,7 @@ method process_response<S>(string response, &State<S> st, ok_handler<S> fn):
     st->app.model = m
     // Process any actions arising
     for i in 0..|as|:
-        process(st, as[i])
+        processor(st, as[i])
     // Done
 
 /**
@@ -109,7 +122,7 @@ method process_response<S>(int code, &State<S> st, err_handler<S> fn):
     st->app.model = m
     // Process any actions arising
     for i in 0..|as|:
-        process(st, as[i])
+        processor(st, as[i])
     // Done
 
 // ==========================================================
