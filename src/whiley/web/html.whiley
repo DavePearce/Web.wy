@@ -1341,52 +1341,8 @@ public function summary<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) 
     return element("summary",attributes,children)
 
 // ========================================================
-// To HTML
+// Event coercions
 // ========================================================
-
-public type ActionProcessor<S,A> is {
-    // processor for mouse events
-    method mouse(MouseEvent,handler<MouseEvent,S,A>),
-    // processor for keyboard events
-    method keyboard(KeyboardEvent,handler<KeyboardEvent,S,A>),
-    // processor for other events
-    method other(Event,handler<Event,S,A>)
-}
-
-/**
- * Convert an HTML model into concrete DOM nodes using a given
- * Document to construct new items, and processor for actions arising.
- */ 
-public method to_dom<S,A>(Node<S,A> node, ActionProcessor<S,A> processor, dom::Document doc) -> (dom::Node r):
-    if node is string:
-        // Construct a text node
-        return doc->createTextNode(node)
-    else:
-        dom::Element element = doc->createElement(node.name)
-        // Recursively construct children
-        for i in 0..|node.children|:
-            // Construct child element
-            dom::Node child = to_dom<S,A>(node.children[i],processor,doc)
-            // Append to this element
-            element->appendChild(child)
-        // Recursively configure attributes
-        for j in 0..|node.attributes|:
-            Attribute<S,A> attr = node.attributes[j]
-            // Dispatch on attribute type
-            if attr is TextAttribute:
-                element->setAttribute(attr.key,attr.value)                
-            else if attr is MouseEventAttribute<S,A>:
-                handler<MouseEvent,S,A> handler = attr.handler
-                element->addEventListener(attr.mouseEvent,&(dom::MouseEvent e -> processor.mouse(to_mouse_event(e),handler)))
-            else if attr is KeyboardEventAttribute<S,A>:
-                // Add key event listener
-                handler<KeyboardEvent,S,A> handler = attr.handler                
-                element->addEventListener(attr.keyEvent,&(dom::KeyboardEvent e -> processor.keyboard(to_key_event(e),handler)))
-            else:
-                handler<Event,S,A> handler = attr.handler                
-                element->addEventListener(attr.event,&(dom::Event e -> processor.other(to_event(e),handler)))
-            // Done
-        return element
 
 // Convert a DOM Event into an HTML (i.e. functional) view.
 method to_event(dom::Event event) -> html::Event:
