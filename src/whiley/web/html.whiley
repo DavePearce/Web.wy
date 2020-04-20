@@ -40,6 +40,9 @@ public function disabled<S,A>() -> Attribute<S,A>:
 
 // download
 // for
+public function sfor<S,A>(string text) -> Attribute<S,A>:
+    return { key: "for", value: text }
+
 // form
 // formaction
 // headers
@@ -82,6 +85,9 @@ public function name<S,A>(string text) -> Attribute<S,A>:
 
 public function style<S,A>(string text) -> Attribute<S,A>:
     return { key: "style", value: text }
+
+public function tYpe<S,A>(string text) -> Attribute<S,A>:
+    return { key: "type", value: text }
 
 public function tabindex<S,A>(int index) -> Attribute<S,A>:
     return { key: "tabindex", value: (string) to_string(index) }
