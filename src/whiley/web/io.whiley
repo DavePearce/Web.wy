@@ -1,8 +1,10 @@
 package web
 
-import u16 from std::integer
+import u16,uint from std::integer
 import string from js::core
+import w3c::dom
 import w3c::ajax with XMLHttpRequest, newXMLHttpRequest, DONE
+import web::html
 import web::app
 
 // ==========================================================
@@ -16,24 +18,55 @@ public type State<S> is app::State<S,Action<S> >
  */
 public type App<S> is app::App<S,Action<S> >
 
+/**
+ * Binds a dom Node to I/O Actions
+ */
+public type Node<S> is html::Node<S,Action<S> >
+
+/**
+ * Binds a dom Node to I/O Elements
+ */
+public type Element<S> is html::Element<S,Action<S> >
+
 // ==========================================================
-// Actions
+// Event Handlers
 // ==========================================================
 
 /**
- * Type of response handlers for OK
+ * Default event handler which converts one state into another along
+ * with zero or more follow-on actions.
  */
-public type ok_handler<S> is function(S, string)->(S,Action<S>[])
+public type handler<S> is function(S)->(S,Action<S>[])
 
 /**
- * Type of response handlers for errors
+ * Handler which consumes some input value along with a given state,
+ * producing an updated state along with zero or more follow-on
+ * actions.
  */
-public type err_handler<S> is function(S)->(S,Action<S>[])
+public type consumer<S,T> is function(S, T)->(S,Action<S>[])
+
+/**
+ * Type of methods which consume come value
+ */
+type meth_t<T> is method(T)
+
+/**
+ * Type of methods which consume nothing.
+ */
+type meth_vt is method()
+
+// ==========================================================
+// HTPP Actions
+// ==========================================================
 
 /**
  * Provides a standard set of I/O actions.
  */
-public type Action<S> is Get<S> | Post<S>
+public type Action<S> is Get<S> |
+    Post<S> |
+    Alert |
+    Timeout<S> |
+    Interval<S>
 
 /**
  * Represents an HTTP Get action
@@ -42,9 +75,9 @@ public type Get<S> is {
     // Target URL for request
     string url,
     // Handler called on OK
-    ok_handler<S> ok,
+    consumer<S,string> ok,
     // Handler called otherwise
-    err_handler<S> error
+    handler<S> error
 }
  
 /**
@@ -56,13 +89,104 @@ public type Post<S> is {
     // Payload to be sent
     string payload,
     // Handler called on OK
-    ok_handler<S> ok,
+    consumer<S,string> ok,
     // Handler called otherwise
-    err_handler<S> error
+    handler<S> error
 }
 
-type m_str is method(string)
-type m_int is method(int)
+/**
+ * Process GET action.
+ */
+method process_request<S>(&State<S> st, Get<S> action):
+    // Bind response handlers
+    meth_t<string> ok = &(string s -> consume_event(s,st,action.ok))
+    meth_t<int> err = &(int i -> process_event(st,action.error))
+    // Finally begin GET request
+    get(action.url, ok, err)
+    
+/**
+ * Process POST action.
+ */
+method process_request<S>(&State<S> st, Post<S> action):
+    // Bind response handlers
+    meth_t<string> ok = &(string s -> consume_event(s,st,action.ok))
+    meth_t<int> err = &(int i -> process_event(st,action.error))
+    // Finally begin POST request
+    post(action.url, action.payload, ok, err)
+
+// ==========================================================
+// Timer Actions
+// ==========================================================
+
+/**
+ * Represents a call to setTimeout()
+ */
+public type Timeout<S> is {
+    // Timeout in ms
+    uint timeout,
+    // Handler to be called on timeout
+    handler<S> handler
+}
+
+/**
+ * Represents a call to setTimeout()
+ */
+public type Interval<S> is {
+    // Timeout in ms
+    uint interval,
+    // Handler to be called on timeout
+    handler<S> handler
+}
+
+/**
+ * Construct a timeout action.
+ */
+public function timeout<S>(uint timeout, handler<S> handler) -> Timeout<S>:
+    return {timeout: timeout, handler: handler}
+
+/**
+ * Construct an interval action.
+ */
+public function interval<S>(uint interval, handler<S> handler) -> Interval<S>:
+    return {interval: interval, handler: handler}
+
+/**
+ * Process alert action.
+ */
+method process_timeout<S>(&State<S> st, Timeout<S> action):
+    meth_vt m = &( -> process_event(st,action.handler))
+    dom::setTimeout(m,action.timeout)    
+
+/**
+ * Process interval action.
+ */
+method process_interval<S>(&State<S> st, Interval<S> action):
+    meth_vt m = &( -> process_event(st,action.handler))
+    dom::setInterval(m,action.interval)    
+
+// ==========================================================
+// Other Actions
+// ==========================================================
+
+/**
+ * Represents a call to alert()
+ */
+public type Alert is {
+    // Alert message
+    string message
+}
+
+/**
+ * Construct an alert message action.
+ */
+public function alert(string message) -> Alert:
+    return {message: message}
+
+/**
+ * Process Alert action.
+ */
+method process_alert<S>(&State<S> st, Alert action):
+    dom::alert(action.message)
 
 // ==========================================================
 // Action Processor
@@ -76,35 +200,23 @@ public method processor<S>(&State<S> st, Action<S> action):
     //
     if action is Get<S>:
         process_request<S>(st,action)
-    else:
+    else if action is Post<S>:
         process_request<S>(st,action)
+    else if action is Alert:
+        process_alert<S>(st,action)    
+    else if action is Timeout<S>:
+        process_timeout<S>(st,action)
+    else:
+        process_interval<S>(st,action)
 
 /**
- * Process GET action.
+ * Process a generic event.  This applies the given handler to the
+ * current state, producing an updated state and some actions.  The
+ * actions are then processed immediately.
  */
-method process_request<S>(&State<S> st, Get<S> action):
-    // Bind response handlers
-    m_str ok = &(string s -> process_response(s,st,action.ok))
-    m_int err = &(int i -> process_response(i,st,action.error))
-    // Finally begin GET request
-    get(action.url, ok, err)
-    
-/**
- * Process POST action.
- */
-method process_request<S>(&State<S> st, Post<S> action):
-    // Bind response handlers
-    m_str ok = &(string s -> process_response(s,st,action.ok))
-    m_int err = &(int i -> process_response(i,st,action.error))
-    // Finally begin POST request
-    post(action.url, action.payload, ok, err)
-
-/**
- * Process successful response.
- */
-method process_response<S>(string response, &State<S> st, ok_handler<S> fn):
+method process_event<S>(&State<S> st, handler<S> fn):
     // Update model
-    (S m, Action<S>[] as) = fn(st->app.model,response)
+    (S m, Action<S>[] as) = fn(st->app.model)
     // Apply model update
     st->app.model = m
     // Process any actions arising
@@ -113,11 +225,14 @@ method process_response<S>(string response, &State<S> st, ok_handler<S> fn):
     // Done
 
 /**
- * Process problematic response.
+ * Process a given event which consumes some data.  This applies the
+ * given handler to the current state and the data in question,
+ * producing an updated state and some actions.  The actions are then
+ * processed immediately.
  */
-method process_response<S>(int code, &State<S> st, err_handler<S> fn):
+method consume_event<S,T>(T response, &State<S> st, consumer<S,T> fn):
     // Update model
-    (S m, Action<S>[] as) = fn(st->app.model)
+    (S m, Action<S>[] as) = fn(st->app.model,response)
     // Apply model update
     st->app.model = m
     // Process any actions arising
