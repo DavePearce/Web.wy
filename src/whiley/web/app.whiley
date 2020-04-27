@@ -118,10 +118,10 @@ method process_other_event<S,A>(dom::Event e, html::handler<html::Event,S,A> h, 
 method process_event<E,S,A>(E e, html::handler<E,S,A> h, &State<S,A> st):
     // Apply event handler to produce action
     (S model, A[] actions) = h(e,st->app.model)
+    // Update application model
+    st->app.model = model    
     // Process pending actions
     for i in 0..|actions|:
         st->app.process(st,actions[i])
-    // Update application model
-    st->app.model = model
     // Refresh display
     refresh(st)
