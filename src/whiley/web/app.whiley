@@ -60,7 +60,7 @@ method refresh<S,A>(&State<S,A> st):
         st->root->appendChild(t)
     else:
         // Determine difference between model states
-        diff::Operation<S,A> update = diff::create(current.model,m)
+        diff::NodeOperation<S,A> update = diff::create(current.model,m)
         // Update existing DOM tree
         t = update_dom(current.view,update,st)
         // Replace old DOM tree (if necessary)
@@ -88,30 +88,14 @@ method to_dom<S,A>(html::Node<S,A> node, &State<S,A> st) -> (dom::Node r):
         for j in 0..|node.attributes|:
             html::Attribute<S,A> attr = node.attributes[j]
             // Dispatch on attribute type
-            if attr is html::TextAttribute:
-                element->setAttribute(attr.key,attr.value)                
-            else if attr is html::MouseEventAttribute<S,A>:
-                // Extract registered mouse handler
-                html::handler<html::MouseEvent,S,A> handler = attr.handler
-                // Add mouse event listener
-                element->addEventListener(attr.mouseEvent,&(dom::MouseEvent e -> process_mouse_event(e,handler,st)))
-            else if attr is html::KeyboardEventAttribute<S,A>:
-                // Extract registered keyboard handler            
-                html::handler<html::KeyboardEvent,S,A> handler = attr.handler
-                // Add key event listener                
-                element->addEventListener(attr.keyEvent,&(dom::KeyboardEvent e -> process_keyboard_event(e,handler,st)))
-            else:
-                // Extract registered event handler            
-                html::handler<html::Event,S,A> handler = attr.handler
-                // Add event listener
-                element->addEventListener(attr.event,&(dom::Event e -> process_other_event(e,handler,st)))
+            set_attribute(element,attr,st)
             // Done
         return element
 
 /**
  * update an existing DOM tree to reflect a new model.
  */
-method update_dom<S,A>(dom::Node tree, diff::Operation<S,A> op, &State<S,A> st) -> (dom::Node r):
+method update_dom<S,A>(dom::Node tree, diff::NodeOperation<S,A> op, &State<S,A> st) -> (dom::Node r):
     if op is null:
         return tree
     else if op is diff::Replace<S,A>:
@@ -122,23 +106,25 @@ method update_dom<S,A>(dom::Node tree, diff::Operation<S,A> op, &State<S,A> st) 
         update_children(tree,op.children,st)
     // Append / Remove children                
     resize_children(tree,op.children,st)
+    // Apply / Undo attributes
+    update_attributes<S,A>(tree,op.attributes,st)
     // Done
     return tree
 
-method update_children<S,A>(dom::Node tree, diff::Operation<S,A>[] operations, &State<S,A> st):
+method update_children<S,A>(dom::Node tree, diff::NodeOperation<S,A>[] operations, &State<S,A> st):
     dom::Node[] children = tree->childNodes
     int size = math::min(|children|,|operations|)
     // Update children
     for i in 0..size:
         dom::Node ithChild = children[i]
-        diff::Operation<S,A> ithOp = operations[i]
+        diff::NodeOperation<S,A> ithOp = operations[i]
         if !(ithOp is null):
             // Recursively update child
             dom::Node t = update_dom(ithChild,ithOp,st)
             // Replace existing child with updated child
             replace_child(tree,ithChild,t)
 
-method resize_children<S,A>(dom::Node tree, diff::Operation<S,A>[] operations, &State<S,A> st):
+method resize_children<S,A>(dom::Node tree, diff::NodeOperation<S,A>[] operations, &State<S,A> st):
     int size
     // Determine current size
     if tree->hasChildNodes():
@@ -149,7 +135,7 @@ method resize_children<S,A>(dom::Node tree, diff::Operation<S,A>[] operations, &
     if size <= |operations|:
         // Appending children
         for i in size..|operations|:
-            diff::Operation<S,A> ith = operations[i]
+            diff::NodeOperation<S,A> ith = operations[i]
             // Only action replacements
             if ith is diff::Replace<S,A>:
                 // Construct child from scratch
@@ -168,9 +154,59 @@ method replace_child(dom::Node tree, dom::Node oldChild, dom::Node newChild):
     if oldChild != newChild:
         tree->replaceChild(newChild,oldChild)
 
+method update_attributes<S,A>(dom::Node tree, diff::AttributeOperation<S,A>[] operations, &State<S,A> st):
+    if tree->nodeType == dom::ELEMENT_NODE:
+        // Enforce that tree is Element
+        assert tree is dom::Element
+        // Undo everything
+        for i in 0..|operations|:
+            diff::AttributeOperation<S,A> ith = operations[i]
+            if ith is null || ith.before is null:
+                skip
+            else:
+                clear_attribute(tree,ith.before,st)
+        // Apply everything
+        for i in 0..|operations|:
+            diff::AttributeOperation<S,A> ith = operations[i]
+            if ith is null || ith.after is null:
+                skip
+            else:
+                set_attribute(tree,ith.after,st)
+    // Done
+
+/**
+ * Set a given attribute on a specific element.  Exactly how this is
+ * done depends on the attribute in question.
+ */
+method set_attribute<S,A>(dom::Element element, html::Attribute<S,A> attr, &State<S,A> st):
+    // Dispatch on attribute type
+    if attr is html::TextAttribute:
+        element->setAttribute(attr.key,attr.value)                
+    else if attr is html::MouseEventAttribute<S,A>:
+        // Extract registered mouse handler
+        html::handler<html::MouseEvent,S,A> handler = attr.handler
+        // Add mouse event listener
+        element->addEventListener(attr.mouseEvent,&(dom::MouseEvent e -> process_mouse_event(e,handler,st)))
+    else if attr is html::KeyboardEventAttribute<S,A>:
+        // Extract registered keyboard handler            
+        html::handler<html::KeyboardEvent,S,A> handler = attr.handler
+        // Add key event listener                
+        element->addEventListener(attr.keyEvent,&(dom::KeyboardEvent e -> process_keyboard_event(e,handler,st)))
+    else:
+        // Extract registered event handler            
+        html::handler<html::Event,S,A> handler = attr.handler
+        // Add event listener
+        element->addEventListener(attr.event,&(dom::Event e -> process_other_event(e,handler,st)))
+
+/**
+ * Clear a give attribute from a specific Element.
+ */
+method clear_attribute<S,A>(dom::Element element, html::Attribute<S,A> attr, &State<S,A> st):
+    skip // for now
+
 /**
  * Simple wrapper for processing mouse events which converts between
- * dom and html event.s
+ * dom and html events.
  */
 method process_mouse_event<S,A>(dom::MouseEvent e, html::handler<html::MouseEvent,S,A> h, &State<S,A> st):
     process_event(html::to_mouse_event(e),h,st)
