@@ -9,5 +9,8 @@ platforms=["whiley","js"]
 [build.whiley]
 source="src/whiley"
 
+[build.js]
+includes=["src/js/**/*.js"]
+
 [dependencies]
 dom="0.1.0"

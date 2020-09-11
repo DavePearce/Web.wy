@@ -34,6 +34,11 @@ public type State<S,A> is {
 }
 
 /**
+ * Following should be in DOM.wy
+ */
+type EventListener is method(dom::Event)|method(dom::MouseEvent)|method(dom::KeyboardEvent)
+
+/**
  * Event loop for an app.
  */
 public export method run<S,A>(App<S,A> app, dom::Node root, dom::Document doc):
@@ -78,6 +83,8 @@ method to_dom<S,A>(html::Node<S,A> node, &State<S,A> st) -> (dom::Node r):
         return st->document->createTextNode(node)
     else:
         dom::Element element = st->document->createElement(node.name)
+        // Initialise listener storage
+        initEventListeners(element)
         // Recursively construct children
         for i in 0..|node.children|:
             // Construct child element
@@ -185,24 +192,41 @@ method set_attribute<S,A>(dom::Element element, html::Attribute<S,A> attr, &Stat
     else if attr is html::MouseEventAttribute<S,A>:
         // Extract registered mouse handler
         html::handler<html::MouseEvent,S,A> handler = attr.handler
+        // Construct key event listener        
+        EventListener listener = &(dom::MouseEvent e -> process_mouse_event(e,handler,st))
         // Add mouse event listener
-        element->addEventListener(attr.mouseEvent,&(dom::MouseEvent e -> process_mouse_event(e,handler,st)))
+        setEventListener(element,attr.mouseEvent,listener)
     else if attr is html::KeyboardEventAttribute<S,A>:
         // Extract registered keyboard handler            
         html::handler<html::KeyboardEvent,S,A> handler = attr.handler
+        // Construct key event listener        
+        EventListener listener = &(dom::KeyboardEvent e -> process_keyboard_event(e,handler,st))
         // Add key event listener                
-        element->addEventListener(attr.keyEvent,&(dom::KeyboardEvent e -> process_keyboard_event(e,handler,st)))
+        setEventListener(element,attr.keyEvent,listener)
     else:
         // Extract registered event handler            
         html::handler<html::Event,S,A> handler = attr.handler
+        // Construct event listener
+        EventListener listener = &(dom::Event e -> process_other_event(e,handler,st))
         // Add event listener
-        element->addEventListener(attr.event,&(dom::Event e -> process_other_event(e,handler,st)))
+        setEventListener(element,attr.event,listener)
 
 /**
  * Clear a give attribute from a specific Element.
  */
 method clear_attribute<S,A>(dom::Element element, html::Attribute<S,A> attr, &State<S,A> st):
-    skip // for now
+    // Dispatch on attribute type
+    if attr is html::TextAttribute:
+        element->setAttribute(attr.key,"")                
+    else if attr is html::MouseEventAttribute<S,A>:
+        // Clear mouse event listener
+        clearEventListener(element,attr.mouseEvent)
+    else if attr is html::KeyboardEventAttribute<S,A>:
+        // Clear key event listener                
+        clearEventListener(element,attr.keyEvent)
+    else:
+        // Clear event listener
+        clearEventListener(element,attr.event)
 
 /**
  * Simple wrapper for processing mouse events which converts between
@@ -239,3 +263,28 @@ method process_event<E,S,A>(E e, html::handler<E,S,A> h, &State<S,A> st):
         st->app.process(st,actions[i])
     // Refresh display
     refresh(st)
+
+/**
+ * Initial a dom element with the necessary dictionary for event
+ * listeners.  This essentially guarantees that every time we
+ * encounter a DOM element created from this library it will have this
+ * dictionary available.  The purpose of the dictionary is to record
+ * listeners that have been set so that they can be cleared again in
+ * the future.
+ */
+export native method initEventListeners(dom::Element element)
+
+/**
+ * Set the listener for a given event on a DOM element such that it
+ * can be subsequently cleared.  If a listener for that event already
+ * exists, then it is removed.  Thus, at most one listener for any
+ * event can exist.  
+ */
+export native method setEventListener<E,S,A>(dom::Element element, string event, EventListener listener)
+
+/**
+ * Clear the listener for a given event on a DOM element.  A listener
+ * must have been previously added, otherwise this will be stuck.
+ */
+export native method clearEventListener<E,S,A>(dom::Element element, string event)
+    
