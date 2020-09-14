@@ -29,8 +29,8 @@ public type State<S,A> is {
     dom::Node root,
     // Current rendering (if any)
     null|Rendering<S,A> rendering,
-    // DOM access (needed for creating)
-    dom::Document document
+    // DOM access (needed for creating, etc)
+    dom::Window window
 }
 
 /**
@@ -41,9 +41,9 @@ type EventListener is method(dom::Event)|method(dom::MouseEvent)|method(dom::Key
 /**
  * Event loop for an app.
  */
-public export method run<S,A>(App<S,A> app, dom::Node root, dom::Document doc):
+public export method run<S,A>(App<S,A> app, dom::Node root, dom::Window win):
     // Construct state object
-    &State<S,A> state = new State{app:app,root:root,rendering:null,document:doc}
+    &State<S,A> state = new State{app:app,root:root,rendering:null,window:win}
     // Construct Initial Display
     refresh(state)
 
@@ -80,9 +80,9 @@ method refresh<S,A>(&State<S,A> st):
 method to_dom<S,A>(html::Node<S,A> node, &State<S,A> st) -> (dom::Node r):
     if node is string:
         // Construct a text node
-        return st->document->createTextNode(node)
+        return st->window->document->createTextNode(node)
     else:
-        dom::Element element = st->document->createElement(node.name)
+        dom::Element element = st->window->document->createElement(node.name)
         // Initialise listener storage
         initEventListeners(element)
         // Recursively construct children

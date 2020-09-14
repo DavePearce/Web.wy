@@ -155,14 +155,14 @@ public function interval<S>(uint interval, handler<S> handler) -> Interval<S>:
  */
 method process_timeout<S>(&State<S> st, Timeout<S> action):
     meth_vt m = &( -> process_event(st,action.handler))
-    dom::setTimeout(m,action.timeout)    
+    st->window->setTimeout(m,action.timeout)    
 
 /**
  * Process interval action.
  */
 method process_interval<S>(&State<S> st, Interval<S> action):
     meth_vt m = &( -> process_event(st,action.handler))
-    dom::setInterval(m,action.interval)    
+    st->window->setInterval(m,action.interval)    
 
 // ==========================================================
 // Other Actions
@@ -186,7 +186,7 @@ public function alert(string message) -> Alert:
  * Process Alert action.
  */
 method process_alert<S>(&State<S> st, Alert action):
-    dom::alert(action.message)
+    st->window->alert(action.message)
 
 // ==========================================================
 // Action Processor
