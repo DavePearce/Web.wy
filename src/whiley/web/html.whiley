@@ -4,6 +4,8 @@ import to_string from std::ascii
 import string from js::core
 import w3c::dom
 
+import Action from web::io
+
 // ==================================================================
 // Textual Attributes
 // ==================================================================
@@ -27,7 +29,7 @@ public type TextAttribute is {
 // checked
 // cite
 // class
-public function class<S,A>(string text) -> Attribute<S,A>:
+public function class<S>(string text) -> Attribute<S>:
     return { key: "class", value: text }
     
 // cols
@@ -35,12 +37,12 @@ public function class<S,A>(string text) -> Attribute<S,A>:
 // content
 // dattime
 // disabled
-public function disabled<S,A>() -> Attribute<S,A>:
+public function disabled<S>() -> Attribute<S>:
     return { key: "disabled", value: "" }
 
 // download
 // for
-public function sfor<S,A>(string text) -> Attribute<S,A>:
+public function sfor<S>(string text) -> Attribute<S>:
     return { key: "for", value: text }
 
 // form
@@ -54,7 +56,7 @@ public function sfor<S,A>(string text) -> Attribute<S,A>:
 // http-equiv
 
 // id
-public function id<S,A>(string text) -> Attribute<S,A>:
+public function id<S>(string text) -> Attribute<S>:
     return { key: "id", value: text }
 
 // ismap
@@ -73,7 +75,7 @@ public function id<S,A>(string text) -> Attribute<S,A>:
 // muted
 
 // name
-public function name<S,A>(string text) -> Attribute<S,A>:
+public function name<S>(string text) -> Attribute<S>:
     return { key: "name", value: text }
 
 // novalidate
@@ -83,13 +85,13 @@ public function name<S,A>(string text) -> Attribute<S,A>:
 // oncanplaythrough
 // onchange
 
-public function style<S,A>(string text) -> Attribute<S,A>:
+public function style<S>(string text) -> Attribute<S>:
     return { key: "style", value: text }
 
-public function tYpe<S,A>(string text) -> Attribute<S,A>:
+public function tYpe<S>(string text) -> Attribute<S>:
     return { key: "type", value: text }
 
-public function tabindex<S,A>(int index) -> Attribute<S,A>:
+public function tabindex<S>(int index) -> Attribute<S>:
     return { key: "tabindex", value: (string) to_string(index) }
 
 
@@ -135,35 +137,35 @@ public type KeyboardEvent is {
 }
 
 // A simple event handler
-public type handler<E,S,A> is function(E,S)->(S,A[])
+public type handler<E,S> is function(E,S)->(S,Action<S>[])
 
-public type EventAttribute<S,A> is {
+public type EventAttribute<S> is {
     string event,
-    handler<Event,S,A> handler
+    handler<Event,S> handler
 }
 
-public type MouseEventAttribute<S,A> is {
+public type MouseEventAttribute<S> is {
     string mouseEvent,
-    handler<MouseEvent,S,A> handler
+    handler<MouseEvent,S> handler
 }
 
-public type KeyboardEventAttribute<S,A> is {
+public type KeyboardEventAttribute<S> is {
     string keyEvent,
-    handler<KeyboardEvent,S,A> handler
+    handler<KeyboardEvent,S> handler
 }
 
 // onafterprint
 // onbeforeprint
 // onnbeforeunload
 // onchange
-public function change<S,A>(handler<MouseEvent,S,A> handler) -> Attribute<S,A>:
+public function change<S>(handler<MouseEvent,S> handler) -> Attribute<S>:
     return { mouseEvent: "change", handler: handler }
 
-public function click<S,A>(handler<MouseEvent,S,A> handler) -> Attribute<S,A>:
+public function click<S>(handler<MouseEvent,S> handler) -> Attribute<S>:
     return { mouseEvent: "click", handler: handler }
 
 // oncopy
-public function dblclick<S,A>(handler<MouseEvent,S,A> handler) -> Attribute<S,A>:
+public function dblclick<S>(handler<MouseEvent,S> handler) -> Attribute<S>:
     return { mouseEvent: "dblclick", handler: handler }
 
 // ondrag
@@ -176,21 +178,21 @@ public function dblclick<S,A>(handler<MouseEvent,S,A> handler) -> Attribute<S,A>
 // onended
 // onerror
 // onfocus
-public function focus<S,A>(handler<Event,S,A> handler) -> Attribute<S,A>:
+public function focus<S>(handler<Event,S> handler) -> Attribute<S>:
     return { event: "focus", handler: handler }
 
 // onhashchange
 // oninput
 // onkeydown
-public function keydown<S,A>(handler<KeyboardEvent,S,A> handler) -> Attribute<S,A>:
+public function keydown<S>(handler<KeyboardEvent,S> handler) -> Attribute<S>:
     return { keyEvent: "keydown", handler: handler }
 
 // onkeypress
-public function keypress<S,A>(handler<KeyboardEvent,S,A> handler) -> Attribute<S,A>:
+public function keypress<S>(handler<KeyboardEvent,S> handler) -> Attribute<S>:
     return { keyEvent: "keypress", handler: handler }
 
 // onkeyup
-public function keyup<S,A>(handler<KeyboardEvent,S,A> handler) -> Attribute<S,A>:
+public function keyup<S>(handler<KeyboardEvent,S> handler) -> Attribute<S>:
     return { keyEvent: "keyup", handler: handler }
 
 // onload
@@ -200,16 +202,16 @@ public function keyup<S,A>(handler<KeyboardEvent,S,A> handler) -> Attribute<S,A>
 // onmessage
 
 // onmousedown
-public function mousedown<S,A>(handler<MouseEvent,S,A> handler) -> Attribute<S,A>:
+public function mousedown<S>(handler<MouseEvent,S> handler) -> Attribute<S>:
     return { mouseEvent: "mousedown", handler: handler }
 
 // onmousemove
-public function mousemove<S,A>(handler<MouseEvent,S,A> handler) -> Attribute<S,A>:
+public function mousemove<S>(handler<MouseEvent,S> handler) -> Attribute<S>:
     return { mouseEvent: "mousemove", handler: handler }
 
 // onmouseout
 // onmouseover
-public function mouseover<S,A>(handler<MouseEvent,S,A> handler) -> Attribute<S,A>:
+public function mouseover<S>(handler<MouseEvent,S> handler) -> Attribute<S>:
     return { mouseEvent: "mouseover", handler: handler }
 
 // onmouseup
@@ -227,33 +229,33 @@ public function mouseover<S,A>(handler<MouseEvent,S,A> handler) -> Attribute<S,A
 // Attributes
 // ==================================================================
 
-public type Attribute<S,A> is TextAttribute |
-                            EventAttribute<S,A> |
-                            MouseEventAttribute<S,A> |
-                            KeyboardEventAttribute<S,A>
+public type Attribute<S> is TextAttribute |
+                            EventAttribute<S> |
+                            MouseEventAttribute<S> |
+                            KeyboardEventAttribute<S>
 
 // ==================================================================
 // Node
 // ==================================================================
 
-public type Element<S,A> is {
+public type Element<S> is {
     string name,
-    Attribute<S,A>[] attributes,
-    Node<S,A>[] children    
+    Attribute<S>[] attributes,
+    Node<S>[] children    
 }
 
-public type Node<S,A> is  Element<S,A> | string
+public type Node<S> is  Element<S> | string
 
-public function element<S,A>(string tag, Node<S,A> child) -> Node<S,A>:
-    return element<S,A>(tag, [id<S,A>("");0], [child])
+public function element<S>(string tag, Node<S> child) -> Node<S>:
+    return element<S>(tag, [id<S>("");0], [child])
 
-public function element<S,A>(string tag, Node<S,A>[] children) -> Node<S,A>:
-    return element<S,A>(tag, [id<S,A>("");0], children)
+public function element<S>(string tag, Node<S>[] children) -> Node<S>:
+    return element<S>(tag, [id<S>("");0], children)
 
-public function element<S,A>(string tag, Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return element<S,A>(tag, attributes, [child])
+public function element<S>(string tag, Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return element<S>(tag, attributes, [child])
 
-public function element<S,A>(string tag, Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function element<S>(string tag, Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return { name: tag, attributes: attributes, children: children }
 
 // ==================================================================
@@ -262,109 +264,109 @@ public function element<S,A>(string tag, Attribute<S,A>[] attributes, Node<S,A>[
 
 
 // h1
-public function h1<S,A>(Node<S,A> child) -> Node<S,A>:
-    return h1<S,A>([id<S,A>("");0], [child])
+public function h1<S>(Node<S> child) -> Node<S>:
+    return h1<S>([id<S>("");0], [child])
 
-public function h1<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return h1<S,A>([id<S,A>("");0], children)
+public function h1<S>(Node<S>[] children) -> Node<S>:
+    return h1<S>([id<S>("");0], children)
 
-public function h1<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return h1<S,A>(attributes, [child])
+public function h1<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return h1<S>(attributes, [child])
 
-public function h1<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function h1<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("h1",attributes,children)
 
 // h2
 
-public function h2<S,A>(Node<S,A> child) -> Node<S,A>:
-    return h2<S,A>([id<S,A>("");0], [child])
+public function h2<S>(Node<S> child) -> Node<S>:
+    return h2<S>([id<S>("");0], [child])
 
-public function h2<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return h2<S,A>([id<S,A>("");0], children)
+public function h2<S>(Node<S>[] children) -> Node<S>:
+    return h2<S>([id<S>("");0], children)
     
-public function h2<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return h2<S,A>(attributes, [child])
+public function h2<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return h2<S>(attributes, [child])
 
-public function h2<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function h2<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("h2",attributes,children)
 
 // h3
-public function h3<S,A>(Node<S,A> child) -> Node<S,A>:
-    return h3<S,A>([id<S,A>("");0], [child])
+public function h3<S>(Node<S> child) -> Node<S>:
+    return h3<S>([id<S>("");0], [child])
 
-public function h3<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return h3<S,A>([id<S,A>("");0], children)
+public function h3<S>(Node<S>[] children) -> Node<S>:
+    return h3<S>([id<S>("");0], children)
 
-public function h3<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return h3<S,A>(attributes, [child])
+public function h3<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return h3<S>(attributes, [child])
 
-public function h3<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function h3<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("h3",attributes,children)
 
 // h4
-public function h4<S,A>(Node<S,A> child) -> Node<S,A>:
-    return h4<S,A>([id<S,A>("");0], [child])
+public function h4<S>(Node<S> child) -> Node<S>:
+    return h4<S>([id<S>("");0], [child])
 
-public function h4<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return h4<S,A>([id<S,A>("");0], children)
+public function h4<S>(Node<S>[] children) -> Node<S>:
+    return h4<S>([id<S>("");0], children)
 
-public function h4<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return h4<S,A>(attributes, [child])
+public function h4<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return h4<S>(attributes, [child])
 
-public function h4<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function h4<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("h4",attributes,children)
 
 // h5
-public function h5<S,A>(Node<S,A> child) -> Node<S,A>:
-    return h5<S,A>([id<S,A>("");0], [child])
+public function h5<S>(Node<S> child) -> Node<S>:
+    return h5<S>([id<S>("");0], [child])
 
-public function h5<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return h5<S,A>([id<S,A>("");0], children)
+public function h5<S>(Node<S>[] children) -> Node<S>:
+    return h5<S>([id<S>("");0], children)
 
-public function h5<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return h5<S,A>(attributes, [child])
+public function h5<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return h5<S>(attributes, [child])
 
-public function h5<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function h5<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("h5",attributes,children)
 
 // h6
-public function h6<S,A>(Node<S,A> child) -> Node<S,A>:
-    return h6<S,A>([id<S,A>("");0], [child])
+public function h6<S>(Node<S> child) -> Node<S>:
+    return h6<S>([id<S>("");0], [child])
 
-public function h6<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return h6<S,A>([id<S,A>("");0], children)
+public function h6<S>(Node<S>[] children) -> Node<S>:
+    return h6<S>([id<S>("");0], children)
 
-public function h6<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return h6<S,A>(attributes, [child])
+public function h6<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return h6<S>(attributes, [child])
 
-public function h6<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function h6<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("h6",attributes,children)
 
 // p
-public function p<S,A>(Node<S,A> child) -> Node<S,A>:
-    return p<S,A>([id<S,A>("");0],[child])
+public function p<S>(Node<S> child) -> Node<S>:
+    return p<S>([id<S>("");0],[child])
 
-public function p<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return p<S,A>([id<S,A>("");0],children)
+public function p<S>(Node<S>[] children) -> Node<S>:
+    return p<S>([id<S>("");0],children)
 
-public function p<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return p<S,A>(attributes,[child])
+public function p<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return p<S>(attributes,[child])
 
-public function p<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function p<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("p",attributes,children)
 
 // br
-public function br<S,A>() -> Node<S,A>:
-    return br<S,A>([id<S,A>("");0])
+public function br<S>() -> Node<S>:
+    return br<S>([id<S>("");0])
 
-public function br<S,A>(Attribute<S,A>[] attributes) -> Node<S,A>:
+public function br<S>(Attribute<S>[] attributes) -> Node<S>:
     return element("br", attributes, ["";0])
 
 // hr
-public function hr<S,A>() -> Node<S,A>:
-    return hr<S,A>([id<S,A>("");0])
+public function hr<S>() -> Node<S>:
+    return hr<S>([id<S>("");0])
 
-public function hr<S,A>(Attribute<S,A>[] attributes) -> Node<S,A>:
+public function hr<S>(Attribute<S>[] attributes) -> Node<S>:
     return element("hr", attributes, ["";0])
 
 // ==================================================================
@@ -372,55 +374,55 @@ public function hr<S,A>(Attribute<S,A>[] attributes) -> Node<S,A>:
 // ==================================================================
 
 // abbr
-public function abbr<S,A>(Node<S,A> child) -> Node<S,A>:
-    return abbr<S,A>([id<S,A>("");0], [child])
+public function abbr<S>(Node<S> child) -> Node<S>:
+    return abbr<S>([id<S>("");0], [child])
 
-public function abbr<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return abbr<S,A>([id<S,A>("");0], children)
+public function abbr<S>(Node<S>[] children) -> Node<S>:
+    return abbr<S>([id<S>("");0], children)
 
-public function abbr<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return abbr<S,A>(attributes, [child])
+public function abbr<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return abbr<S>(attributes, [child])
 
-public function abbr<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function abbr<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("abbr",attributes,children)
 
 // address
-public function address<S,A>(Node<S,A> child) -> Node<S,A>:
-    return address<S,A>([id<S,A>("");0], [child])
+public function address<S>(Node<S> child) -> Node<S>:
+    return address<S>([id<S>("");0], [child])
 
-public function address<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return address<S,A>([id<S,A>("");0], children)
+public function address<S>(Node<S>[] children) -> Node<S>:
+    return address<S>([id<S>("");0], children)
 
-public function address<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return address<S,A>(attributes, [child])
+public function address<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return address<S>(attributes, [child])
 
-public function address<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function address<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("address",attributes,children)
 
 // b
-public function b<S,A>(Node<S,A> child) -> Node<S,A>:
-    return b<S,A>([id<S,A>("");0], [child])
+public function b<S>(Node<S> child) -> Node<S>:
+    return b<S>([id<S>("");0], [child])
 
-public function b<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return b<S,A>([id<S,A>("");0], children)
+public function b<S>(Node<S>[] children) -> Node<S>:
+    return b<S>([id<S>("");0], children)
 
-public function b<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return b<S,A>(attributes, [child])
+public function b<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return b<S>(attributes, [child])
 
-public function b<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function b<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("b",attributes,children)
 
 // blockquote
-public function blockquote<S,A>(Node<S,A> child) -> Node<S,A>:
-    return blockquote<S,A>([id<S,A>("");0], [child])
+public function blockquote<S>(Node<S> child) -> Node<S>:
+    return blockquote<S>([id<S>("");0], [child])
 
-public function blockquote<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return blockquote<S,A>([id<S,A>("");0], children)
+public function blockquote<S>(Node<S>[] children) -> Node<S>:
+    return blockquote<S>([id<S>("");0], children)
 
-public function blockquote<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return blockquote<S,A>(attributes, [child])
+public function blockquote<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return blockquote<S>(attributes, [child])
 
-public function blockquote<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function blockquote<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("blockquote",attributes,children)
 
 // bdi
@@ -428,84 +430,84 @@ public function blockquote<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] childre
 // big
 
 // center
-public function center<S,A>(Node<S,A> child) -> Node<S,A>:
-    return center<S,A>([id<S,A>("");0], [child])
+public function center<S>(Node<S> child) -> Node<S>:
+    return center<S>([id<S>("");0], [child])
 
-public function center<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return center<S,A>([id<S,A>("");0], children)
+public function center<S>(Node<S>[] children) -> Node<S>:
+    return center<S>([id<S>("");0], children)
 
-public function center<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return center<S,A>(attributes, [child])
+public function center<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return center<S>(attributes, [child])
 
-public function center<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function center<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("center",attributes,children)
 
 // cite
-public function cite<S,A>(Node<S,A> child) -> Node<S,A>:
-    return cite<S,A>([id<S,A>("");0], [child])
+public function cite<S>(Node<S> child) -> Node<S>:
+    return cite<S>([id<S>("");0], [child])
 
-public function cite<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return cite<S,A>([id<S,A>("");0], children)
+public function cite<S>(Node<S>[] children) -> Node<S>:
+    return cite<S>([id<S>("");0], children)
 
-public function cite<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return cite<S,A>(attributes, [child])
+public function cite<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return cite<S>(attributes, [child])
 
-public function cite<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function cite<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("cite",attributes,children)
 
 // code
-public function code<S,A>(Node<S,A> child) -> Node<S,A>:
-    return code<S,A>([id<S,A>("");0], [child])
+public function code<S>(Node<S> child) -> Node<S>:
+    return code<S>([id<S>("");0], [child])
 
-public function code<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return code<S,A>([id<S,A>("");0], children)
+public function code<S>(Node<S>[] children) -> Node<S>:
+    return code<S>([id<S>("");0], children)
 
-public function code<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return code<S,A>(attributes, [child])
+public function code<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return code<S>(attributes, [child])
 
-public function code<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function code<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("code",attributes,children)
 
 // del
 // dfn
 
 // em
-public function em<S,A>(Node<S,A> child) -> Node<S,A>:
-    return em<S,A>([id<S,A>("");0], [child])
+public function em<S>(Node<S> child) -> Node<S>:
+    return em<S>([id<S>("");0], [child])
 
-public function em<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return em<S,A>([id<S,A>("");0], children)
+public function em<S>(Node<S>[] children) -> Node<S>:
+    return em<S>([id<S>("");0], children)
 
-public function em<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return em<S,A>(attributes, [child])
+public function em<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return em<S>(attributes, [child])
 
-public function em<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function em<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("em",attributes,children)
 
 // font
-public function font<S,A>(Node<S,A> child) -> Node<S,A>:
-    return font<S,A>([id<S,A>("");0], [child])
+public function font<S>(Node<S> child) -> Node<S>:
+    return font<S>([id<S>("");0], [child])
 
-public function font<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return font<S,A>([id<S,A>("");0], children)
+public function font<S>(Node<S>[] children) -> Node<S>:
+    return font<S>([id<S>("");0], children)
 
-public function font<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return font<S,A>(attributes, [child])
+public function font<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return font<S>(attributes, [child])
 
-public function font<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function font<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("font",attributes,children)
 
 // i
-public function i<S,A>(Node<S,A> child) -> Node<S,A>:
-    return i<S,A>([id<S,A>("");0], [child])
+public function i<S>(Node<S> child) -> Node<S>:
+    return i<S>([id<S>("");0], [child])
 
-public function i<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return i<S,A>([id<S,A>("");0], children)
+public function i<S>(Node<S>[] children) -> Node<S>:
+    return i<S>([id<S>("");0], children)
 
-public function i<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return i<S,A>(attributes, [child])
+public function i<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return i<S>(attributes, [child])
 
-public function i<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function i<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("i",attributes,children)
 
 // ins
@@ -513,114 +515,114 @@ public function i<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Nod
 // mark
 // meter
 // pre
-public function pre<S,A>(Node<S,A> child) -> Node<S,A>:
-    return pre<S,A>([id<S,A>("");0], [child])
+public function pre<S>(Node<S> child) -> Node<S>:
+    return pre<S>([id<S>("");0], [child])
 
-public function pre<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return pre<S,A>([id<S,A>("");0], children)
+public function pre<S>(Node<S>[] children) -> Node<S>:
+    return pre<S>([id<S>("");0], children)
 
-public function pre<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return pre<S,A>(attributes, [child])
+public function pre<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return pre<S>(attributes, [child])
 
-public function pre<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function pre<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("pre",attributes,children)
 
 // progress
 
 // q
-public function q<S,A>(Node<S,A> child) -> Node<S,A>:
-    return q<S,A>([id<S,A>("");0], [child])
+public function q<S>(Node<S> child) -> Node<S>:
+    return q<S>([id<S>("");0], [child])
 
-public function q<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return q<S,A>([id<S,A>("");0], children)
+public function q<S>(Node<S>[] children) -> Node<S>:
+    return q<S>([id<S>("");0], children)
 
-public function q<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return q<S,A>(attributes, [child])
+public function q<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return q<S>(attributes, [child])
 
-public function q<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function q<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("q",attributes,children)
 
 // rp
 // rt
 // ruby
 // s
-public function s<S,A>(Node<S,A> child) -> Node<S,A>:
-    return s<S,A>([id<S,A>("");0], [child])
+public function s<S>(Node<S> child) -> Node<S>:
+    return s<S>([id<S>("");0], [child])
 
-public function s<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return s<S,A>([id<S,A>("");0], children)
+public function s<S>(Node<S>[] children) -> Node<S>:
+    return s<S>([id<S>("");0], children)
 
-public function s<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return s<S,A>(attributes, [child])
+public function s<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return s<S>(attributes, [child])
 
-public function s<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function s<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("s",attributes,children)
 
 // samp
 
 // small
-public function small<S,A>(Node<S,A> child) -> Node<S,A>:
-    return small<S,A>([id<S,A>("");0], [child])
+public function small<S>(Node<S> child) -> Node<S>:
+    return small<S>([id<S>("");0], [child])
 
-public function small<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return small<S,A>([id<S,A>("");0], children)
+public function small<S>(Node<S>[] children) -> Node<S>:
+    return small<S>([id<S>("");0], children)
 
-public function small<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return small<S,A>(attributes, [child])
+public function small<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return small<S>(attributes, [child])
 
-public function small<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function small<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("small",attributes,children)
 
 // strike
-public function strike<S,A>(Node<S,A> child) -> Node<S,A>:
-    return strike<S,A>([id<S,A>("");0], [child])
+public function strike<S>(Node<S> child) -> Node<S>:
+    return strike<S>([id<S>("");0], [child])
 
-public function strike<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return strike<S,A>([id<S,A>("");0], children)
+public function strike<S>(Node<S>[] children) -> Node<S>:
+    return strike<S>([id<S>("");0], children)
 
-public function strike<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return strike<S,A>(attributes, [child])
+public function strike<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return strike<S>(attributes, [child])
 
-public function strike<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function strike<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("strike",attributes,children)
 
 // strong
-public function strong<S,A>(Node<S,A> child) -> Node<S,A>:
-    return strong<S,A>([id<S,A>("");0], [child])
+public function strong<S>(Node<S> child) -> Node<S>:
+    return strong<S>([id<S>("");0], [child])
 
-public function strong<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return strong<S,A>([id<S,A>("");0], children)
+public function strong<S>(Node<S>[] children) -> Node<S>:
+    return strong<S>([id<S>("");0], children)
 
-public function strong<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return strong<S,A>(attributes, [child])
+public function strong<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return strong<S>(attributes, [child])
 
-public function strong<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function strong<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("strong",attributes,children)
 
 // sub
-public function sub<S,A>(Node<S,A> child) -> Node<S,A>:
-    return sub<S,A>([id<S,A>("");0], [child])
+public function sub<S>(Node<S> child) -> Node<S>:
+    return sub<S>([id<S>("");0], [child])
 
-public function sub<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return sub<S,A>([id<S,A>("");0], children)
+public function sub<S>(Node<S>[] children) -> Node<S>:
+    return sub<S>([id<S>("");0], children)
 
-public function sub<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return sub<S,A>(attributes, [child])
+public function sub<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return sub<S>(attributes, [child])
 
-public function sub<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function sub<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("sub",attributes,children)
 
 // sup
-public function sup<S,A>(Node<S,A> child) -> Node<S,A>:
-    return sup<S,A>([id<S,A>("");0], [child])
+public function sup<S>(Node<S> child) -> Node<S>:
+    return sup<S>([id<S>("");0], [child])
 
-public function sup<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return sup<S,A>([id<S,A>("");0], children)
+public function sup<S>(Node<S>[] children) -> Node<S>:
+    return sup<S>([id<S>("");0], children)
 
-public function sup<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return sup<S,A>(attributes, [child])
+public function sup<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return sup<S>(attributes, [child])
 
-public function sup<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function sup<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("sup",attributes,children)
 
 // template
@@ -628,16 +630,16 @@ public function sup<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> N
 // tt
 
 // u
-public function u<S,A>(Node<S,A> child) -> Node<S,A>:
-    return u<S,A>([id<S,A>("");0], [child])
+public function u<S>(Node<S> child) -> Node<S>:
+    return u<S>([id<S>("");0], [child])
 
-public function u<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return u<S,A>([id<S,A>("");0], children)
+public function u<S>(Node<S>[] children) -> Node<S>:
+    return u<S>([id<S>("");0], children)
 
-public function u<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return u<S,A>(attributes, [child])
+public function u<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return u<S>(attributes, [child])
 
-public function u<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function u<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("u",attributes,children)
 
 // var
@@ -648,159 +650,159 @@ public function u<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Nod
 // ==================================================================
 
 // form
-public function form<S,A>(Node<S,A> child) -> Node<S,A>:
-    return form<S,A>([id<S,A>("");0], [child])
+public function form<S>(Node<S> child) -> Node<S>:
+    return form<S>([id<S>("");0], [child])
 
-public function form<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return form<S,A>([id<S,A>("");0], children)
+public function form<S>(Node<S>[] children) -> Node<S>:
+    return form<S>([id<S>("");0], children)
 
-public function form<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return form<S,A>(attributes, [child])
+public function form<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return form<S>(attributes, [child])
 
-public function form<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function form<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("form",attributes,children)
 
 // input
-public function input<S,A>(Node<S,A> child) -> Node<S,A>:
-    return input<S,A>([id<S,A>("");0], [child])
+public function input<S>(Node<S> child) -> Node<S>:
+    return input<S>([id<S>("");0], [child])
 
-public function input<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return input<S,A>([id<S,A>("");0], children)
+public function input<S>(Node<S>[] children) -> Node<S>:
+    return input<S>([id<S>("");0], children)
 
-public function input<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return input<S,A>(attributes, [child])
+public function input<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return input<S>(attributes, [child])
 
-public function input<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function input<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("input",attributes,children)
 
 // textarea
-public function textarea<S,A>(Node<S,A> child) -> Node<S,A>:
-    return textarea<S,A>([id<S,A>("");0], [child])
+public function textarea<S>(Node<S> child) -> Node<S>:
+    return textarea<S>([id<S>("");0], [child])
 
-public function textarea<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return textarea<S,A>([id<S,A>("");0], children)
+public function textarea<S>(Node<S>[] children) -> Node<S>:
+    return textarea<S>([id<S>("");0], children)
 
-public function textarea<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return textarea<S,A>(attributes, [child])
+public function textarea<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return textarea<S>(attributes, [child])
 
-public function textarea<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function textarea<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("textarea",attributes,children)
 
 // button
-public function button<S,A>(Node<S,A> child) -> Node<S,A>:
-    return button<S,A>([id<S,A>("");0], [child])
+public function button<S>(Node<S> child) -> Node<S>:
+    return button<S>([id<S>("");0], [child])
 
-public function button<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return button<S,A>([id<S,A>("");0], children)
+public function button<S>(Node<S>[] children) -> Node<S>:
+    return button<S>([id<S>("");0], children)
 
-public function button<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return button<S,A>(attributes, [child])
+public function button<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return button<S>(attributes, [child])
 
-public function button<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function button<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("button",attributes,children)
 
 // select
-public function select<S,A>(Node<S,A> child) -> Node<S,A>:
-    return select<S,A>([id<S,A>("");0], [child])
+public function select<S>(Node<S> child) -> Node<S>:
+    return select<S>([id<S>("");0], [child])
 
-public function select<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return select<S,A>([id<S,A>("");0], children)
+public function select<S>(Node<S>[] children) -> Node<S>:
+    return select<S>([id<S>("");0], children)
 
-public function select<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return select<S,A>(attributes, [child])
+public function select<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return select<S>(attributes, [child])
 
-public function select<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function select<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("select",attributes,children)
 
 // optgroup
-public function optgroup<S,A>(Node<S,A> child) -> Node<S,A>:
-    return optgroup<S,A>([id<S,A>("");0], [child])
+public function optgroup<S>(Node<S> child) -> Node<S>:
+    return optgroup<S>([id<S>("");0], [child])
 
-public function optgroup<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return optgroup<S,A>([id<S,A>("");0], children)
+public function optgroup<S>(Node<S>[] children) -> Node<S>:
+    return optgroup<S>([id<S>("");0], children)
 
-public function optgroup<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return optgroup<S,A>(attributes, [child])
+public function optgroup<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return optgroup<S>(attributes, [child])
 
-public function optgroup<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function optgroup<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("optgroup",attributes,children)
 
 // option
-public function option<S,A>(Node<S,A> child) -> Node<S,A>:
-    return option<S,A>([id<S,A>("");0], [child])
+public function option<S>(Node<S> child) -> Node<S>:
+    return option<S>([id<S>("");0], [child])
 
-public function option<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return option<S,A>([id<S,A>("");0], children)
+public function option<S>(Node<S>[] children) -> Node<S>:
+    return option<S>([id<S>("");0], children)
 
-public function option<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return option<S,A>(attributes, [child])
+public function option<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return option<S>(attributes, [child])
 
-public function option<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function option<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("option",attributes,children)
 
 // label
-public function label<S,A>(Node<S,A> child) -> Node<S,A>:
-    return label<S,A>([id<S,A>("");0], [child])
+public function label<S>(Node<S> child) -> Node<S>:
+    return label<S>([id<S>("");0], [child])
 
-public function label<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return label<S,A>([id<S,A>("");0], children)
+public function label<S>(Node<S>[] children) -> Node<S>:
+    return label<S>([id<S>("");0], children)
 
-public function label<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return label<S,A>(attributes, [child])
+public function label<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return label<S>(attributes, [child])
 
-public function label<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function label<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("label",attributes,children)
 
 // fieldset
-public function fieldset<S,A>(Node<S,A> child) -> Node<S,A>:
-    return fieldset<S,A>([id<S,A>("");0], [child])
+public function fieldset<S>(Node<S> child) -> Node<S>:
+    return fieldset<S>([id<S>("");0], [child])
 
-public function fieldset<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return fieldset<S,A>([id<S,A>("");0], children)
+public function fieldset<S>(Node<S>[] children) -> Node<S>:
+    return fieldset<S>([id<S>("");0], children)
 
-public function fieldset<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return fieldset<S,A>(attributes, [child])
+public function fieldset<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return fieldset<S>(attributes, [child])
 
-public function fieldset<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function fieldset<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("fieldset",attributes,children)
 
 // legend
-public function legend<S,A>(Node<S,A> child) -> Node<S,A>:
-    return legend<S,A>([id<S,A>("");0], [child])
+public function legend<S>(Node<S> child) -> Node<S>:
+    return legend<S>([id<S>("");0], [child])
 
-public function legend<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return legend<S,A>([id<S,A>("");0], children)
+public function legend<S>(Node<S>[] children) -> Node<S>:
+    return legend<S>([id<S>("");0], children)
 
-public function legend<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return legend<S,A>(attributes, [child])
+public function legend<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return legend<S>(attributes, [child])
 
-public function legend<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function legend<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("legend",attributes,children)
 
 // datalist
-public function datalist<S,A>(Node<S,A> child) -> Node<S,A>:
-    return datalist<S,A>([id<S,A>("");0], [child])
+public function datalist<S>(Node<S> child) -> Node<S>:
+    return datalist<S>([id<S>("");0], [child])
 
-public function datalist<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return datalist<S,A>([id<S,A>("");0], children)
+public function datalist<S>(Node<S>[] children) -> Node<S>:
+    return datalist<S>([id<S>("");0], children)
 
-public function datalist<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return datalist<S,A>(attributes, [child])
+public function datalist<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return datalist<S>(attributes, [child])
 
-public function datalist<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function datalist<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("datalist",attributes,children)
 
 // output
-public function output<S,A>(Node<S,A> child) -> Node<S,A>:
-    return output<S,A>([id<S,A>("");0], [child])
+public function output<S>(Node<S> child) -> Node<S>:
+    return output<S>([id<S>("");0], [child])
 
-public function output<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return output<S,A>([id<S,A>("");0], children)
+public function output<S>(Node<S>[] children) -> Node<S>:
+    return output<S>([id<S>("");0], children)
 
-public function output<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return output<S,A>(attributes, [child])
+public function output<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return output<S>(attributes, [child])
 
-public function output<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function output<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("output",attributes,children)
 
 
@@ -812,16 +814,16 @@ public function output<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -
 // frameset
 // noframes
 
-public function iframe<S,A>(Node<S,A> child) -> Node<S,A>:
-    return iframe<S,A>([id<S,A>("");0], [child])
+public function iframe<S>(Node<S> child) -> Node<S>:
+    return iframe<S>([id<S>("");0], [child])
 
-public function iframe<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return iframe<S,A>([id<S,A>("");0], children)
+public function iframe<S>(Node<S>[] children) -> Node<S>:
+    return iframe<S>([id<S>("");0], children)
 
-public function iframe<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return iframe<S,A>(attributes, [child])
+public function iframe<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return iframe<S>(attributes, [child])
 
-public function iframe<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function iframe<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("iframe",attributes,children)
 
 // ==================================================================
@@ -829,107 +831,107 @@ public function iframe<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -
 // ==================================================================
 
 // img
-public function img<S,A>(Node<S,A> child) -> Node<S,A>:
-    return img<S,A>([id<S,A>("");0], [child])
+public function img<S>(Node<S> child) -> Node<S>:
+    return img<S>([id<S>("");0], [child])
 
-public function img<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return img<S,A>([id<S,A>("");0], children)
+public function img<S>(Node<S>[] children) -> Node<S>:
+    return img<S>([id<S>("");0], children)
 
-public function img<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return img<S,A>(attributes, [child])
+public function img<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return img<S>(attributes, [child])
 
-public function img<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function img<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("img",attributes,children)
 
 // map
-public function map<S,A>(Node<S,A> child) -> Node<S,A>:
-    return map<S,A>([id<S,A>("");0], [child])
+public function map<S>(Node<S> child) -> Node<S>:
+    return map<S>([id<S>("");0], [child])
 
-public function map<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return map<S,A>([id<S,A>("");0], children)
+public function map<S>(Node<S>[] children) -> Node<S>:
+    return map<S>([id<S>("");0], children)
 
-public function map<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return map<S,A>(attributes, [child])
+public function map<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return map<S>(attributes, [child])
 
-public function map<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function map<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("map",attributes,children)
 
 // area
-public function area<S,A>(Node<S,A> child) -> Node<S,A>:
-    return area<S,A>([id<S,A>("");0], [child])
+public function area<S>(Node<S> child) -> Node<S>:
+    return area<S>([id<S>("");0], [child])
 
-public function area<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return area<S,A>([id<S,A>("");0], children)
+public function area<S>(Node<S>[] children) -> Node<S>:
+    return area<S>([id<S>("");0], children)
 
-public function area<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return area<S,A>(attributes, [child])
+public function area<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return area<S>(attributes, [child])
 
-public function area<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function area<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("area",attributes,children)
 
 // canvas
-public function canvas<S,A>(Node<S,A> child) -> Node<S,A>:
-    return canvas<S,A>([id<S,A>("");0], [child])
+public function canvas<S>(Node<S> child) -> Node<S>:
+    return canvas<S>([id<S>("");0], [child])
 
-public function canvas<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return canvas<S,A>([id<S,A>("");0], children)
+public function canvas<S>(Node<S>[] children) -> Node<S>:
+    return canvas<S>([id<S>("");0], children)
 
-public function canvas<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return canvas<S,A>(attributes, [child])
+public function canvas<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return canvas<S>(attributes, [child])
 
-public function canvas<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function canvas<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("canvas",attributes,children)
 
 // figcaption
-public function figcaption<S,A>(Node<S,A> child) -> Node<S,A>:
-    return figcaption<S,A>([id<S,A>("");0], [child])
+public function figcaption<S>(Node<S> child) -> Node<S>:
+    return figcaption<S>([id<S>("");0], [child])
 
-public function figcaption<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return figcaption<S,A>([id<S,A>("");0], children)
+public function figcaption<S>(Node<S>[] children) -> Node<S>:
+    return figcaption<S>([id<S>("");0], children)
 
-public function figcaption<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return figcaption<S,A>(attributes, [child])
+public function figcaption<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return figcaption<S>(attributes, [child])
 
-public function figcaption<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function figcaption<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("figcaption",attributes,children)
 
 // figure
-public function figure<S,A>(Node<S,A> child) -> Node<S,A>:
-    return figure<S,A>([id<S,A>("");0], [child])
+public function figure<S>(Node<S> child) -> Node<S>:
+    return figure<S>([id<S>("");0], [child])
 
-public function figure<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return figure<S,A>([id<S,A>("");0], children)
+public function figure<S>(Node<S>[] children) -> Node<S>:
+    return figure<S>([id<S>("");0], children)
 
-public function figure<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return figure<S,A>(attributes, [child])
+public function figure<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return figure<S>(attributes, [child])
 
-public function figure<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function figure<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("figure",attributes,children)
 
 // picture
-public function picture<S,A>(Node<S,A> child) -> Node<S,A>:
-    return picture<S,A>([id<S,A>("");0], [child])
+public function picture<S>(Node<S> child) -> Node<S>:
+    return picture<S>([id<S>("");0], [child])
 
-public function picture<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return picture<S,A>([id<S,A>("");0], children)
+public function picture<S>(Node<S>[] children) -> Node<S>:
+    return picture<S>([id<S>("");0], children)
 
-public function picture<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return picture<S,A>(attributes, [child])
+public function picture<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return picture<S>(attributes, [child])
 
-public function picture<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function picture<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("picture",attributes,children)
 
 // svg
-public function svg<S,A>(Node<S,A> child) -> Node<S,A>:
-    return svg<S,A>([id<S,A>("");0], [child])
+public function svg<S>(Node<S> child) -> Node<S>:
+    return svg<S>([id<S>("");0], [child])
 
-public function svg<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return svg<S,A>([id<S,A>("");0], children)
+public function svg<S>(Node<S>[] children) -> Node<S>:
+    return svg<S>([id<S>("");0], children)
 
-public function svg<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return svg<S,A>(attributes, [child])
+public function svg<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return svg<S>(attributes, [child])
 
-public function svg<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function svg<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("svg",attributes,children)
 
 // ==================================================================
@@ -937,42 +939,42 @@ public function svg<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> N
 // ==================================================================
 
 // a
-public function a<S,A>(Node<S,A> child) -> Node<S,A>:
-    return a<S,A>([id<S,A>("");0], [child])
+public function a<S>(Node<S> child) -> Node<S>:
+    return a<S>([id<S>("");0], [child])
 
-public function a<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return a<S,A>([id<S,A>("");0], children)
+public function a<S>(Node<S>[] children) -> Node<S>:
+    return a<S>([id<S>("");0], children)
 
-public function a<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return a<S,A>(attributes, [child])
+public function a<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return a<S>(attributes, [child])
 
-public function a<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function a<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("a",attributes,children)
 
 // link
-public function link<S,A>(Node<S,A> child) -> Node<S,A>:
-    return link<S,A>([id<S,A>("");0], [child])
+public function link<S>(Node<S> child) -> Node<S>:
+    return link<S>([id<S>("");0], [child])
 
-public function link<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return link<S,A>([id<S,A>("");0], children)
+public function link<S>(Node<S>[] children) -> Node<S>:
+    return link<S>([id<S>("");0], children)
 
-public function link<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return link<S,A>(attributes, [child])
+public function link<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return link<S>(attributes, [child])
 
-public function link<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function link<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("link",attributes,children)
 
 // nav
-public function nav<S,A>(Node<S,A> child) -> Node<S,A>:
-    return nav<S,A>([id<S,A>("");0], [child])
+public function nav<S>(Node<S> child) -> Node<S>:
+    return nav<S>([id<S>("");0], [child])
 
-public function nav<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return nav<S,A>([id<S,A>("");0], children)
+public function nav<S>(Node<S>[] children) -> Node<S>:
+    return nav<S>([id<S>("");0], children)
 
-public function nav<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return nav<S,A>(attributes, [child])
+public function nav<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return nav<S>(attributes, [child])
 
-public function nav<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function nav<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("nav",attributes,children)
 
 // ==================================================================
@@ -980,81 +982,81 @@ public function nav<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> N
 // ==================================================================
 
 // ul
-public function ul<S,A>(Node<S,A> child) -> Node<S,A>:
-    return ul<S,A>([id<S,A>("");0], [child])
+public function ul<S>(Node<S> child) -> Node<S>:
+    return ul<S>([id<S>("");0], [child])
 
-public function ul<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return ul<S,A>([id<S,A>("");0], children)
+public function ul<S>(Node<S>[] children) -> Node<S>:
+    return ul<S>([id<S>("");0], children)
 
-public function ul<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return ul<S,A>(attributes, [child])
+public function ul<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return ul<S>(attributes, [child])
 
-public function ul<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function ul<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("ul",attributes,children)
 
 // ol
-public function ol<S,A>(Node<S,A> child) -> Node<S,A>:
-    return ol<S,A>([id<S,A>("");0], [child])
+public function ol<S>(Node<S> child) -> Node<S>:
+    return ol<S>([id<S>("");0], [child])
 
-public function ol<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return ol<S,A>([id<S,A>("");0], children)
+public function ol<S>(Node<S>[] children) -> Node<S>:
+    return ol<S>([id<S>("");0], children)
 
-public function ol<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return ol<S,A>(attributes, [child])
+public function ol<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return ol<S>(attributes, [child])
 
-public function ol<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function ol<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("ol",attributes,children)
 
 // li
-public function li<S,A>(Node<S,A> child) -> Node<S,A>:
-    return li<S,A>([id<S,A>("");0], [child])
+public function li<S>(Node<S> child) -> Node<S>:
+    return li<S>([id<S>("");0], [child])
 
-public function li<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return li<S,A>([id<S,A>("");0], children)
+public function li<S>(Node<S>[] children) -> Node<S>:
+    return li<S>([id<S>("");0], children)
 
-public function li<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return li<S,A>(attributes, [child])
+public function li<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return li<S>(attributes, [child])
 
-public function li<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function li<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("li",attributes,children)
 
 // dl
-public function dl<S,A>(Node<S,A> child) -> Node<S,A>:
-    return dl<S,A>([id<S,A>("");0], [child])
+public function dl<S>(Node<S> child) -> Node<S>:
+    return dl<S>([id<S>("");0], [child])
 
-public function dl<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return dl<S,A>([id<S,A>("");0], children)
+public function dl<S>(Node<S>[] children) -> Node<S>:
+    return dl<S>([id<S>("");0], children)
 
-public function dl<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return dl<S,A>(attributes, [child])
+public function dl<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return dl<S>(attributes, [child])
 
-public function dl<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function dl<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("dl",attributes,children)
 
 // dt
-public function dtr<S,A>(Node<S,A> child) -> Node<S,A>:
-    return dtr<S,A>([id<S,A>("");0], [child])
+public function dtr<S>(Node<S> child) -> Node<S>:
+    return dtr<S>([id<S>("");0], [child])
 
-public function dtr<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return dtr<S,A>([id<S,A>("");0], children)
+public function dtr<S>(Node<S>[] children) -> Node<S>:
+    return dtr<S>([id<S>("");0], children)
 
-public function dtr<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return dtr<S,A>(attributes, [child])
+public function dtr<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return dtr<S>(attributes, [child])
 
-public function dtr<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function dtr<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("dtr",attributes,children)
 
 // dd
-public function dd<S,A>(Node<S,A> child) -> Node<S,A>:
-    return dd<S,A>([id<S,A>("");0], [child])
+public function dd<S>(Node<S> child) -> Node<S>:
+    return dd<S>([id<S>("");0], [child])
 
-public function dd<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return dd<S,A>([id<S,A>("");0], children)
+public function dd<S>(Node<S>[] children) -> Node<S>:
+    return dd<S>([id<S>("");0], children)
 
-public function dd<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return dd<S,A>(attributes, [child])
+public function dd<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return dd<S>(attributes, [child])
 
-public function dd<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function dd<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("dd",attributes,children)
 
 // ==================================================================
@@ -1062,133 +1064,133 @@ public function dd<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> No
 // ==================================================================
 
 // table
-public function table<S,A>(Node<S,A> child) -> Node<S,A>:
-    return table<S,A>([id<S,A>("");0], [child])
+public function table<S>(Node<S> child) -> Node<S>:
+    return table<S>([id<S>("");0], [child])
 
-public function table<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return table<S,A>([id<S,A>("");0], children)
+public function table<S>(Node<S>[] children) -> Node<S>:
+    return table<S>([id<S>("");0], children)
 
-public function table<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return table<S,A>(attributes, [child])
+public function table<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return table<S>(attributes, [child])
 
-public function table<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function table<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("table",attributes,children)
 
 // caption
-public function caption<S,A>(Node<S,A> child) -> Node<S,A>:
-    return caption<S,A>([id<S,A>("");0], [child])
+public function caption<S>(Node<S> child) -> Node<S>:
+    return caption<S>([id<S>("");0], [child])
 
-public function caption<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return caption<S,A>([id<S,A>("");0], children)
+public function caption<S>(Node<S>[] children) -> Node<S>:
+    return caption<S>([id<S>("");0], children)
 
-public function caption<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return caption<S,A>(attributes, [child])
+public function caption<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return caption<S>(attributes, [child])
 
-public function caption<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function caption<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("caption",attributes,children)
 
 // th
-public function th<S,A>(Node<S,A> child) -> Node<S,A>:
-    return th<S,A>([id<S,A>("");0], [child])
+public function th<S>(Node<S> child) -> Node<S>:
+    return th<S>([id<S>("");0], [child])
 
-public function th<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return th<S,A>([id<S,A>("");0], children)
+public function th<S>(Node<S>[] children) -> Node<S>:
+    return th<S>([id<S>("");0], children)
 
-public function th<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return th<S,A>(attributes, [child])
+public function th<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return th<S>(attributes, [child])
 
-public function th<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function th<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("th",attributes,children)
 
 // tr
-public function tr<S,A>(Node<S,A> child) -> Node<S,A>:
-    return tr<S,A>([id<S,A>("");0], [child])
+public function tr<S>(Node<S> child) -> Node<S>:
+    return tr<S>([id<S>("");0], [child])
 
-public function tr<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return tr<S,A>([id<S,A>("");0], children)
+public function tr<S>(Node<S>[] children) -> Node<S>:
+    return tr<S>([id<S>("");0], children)
 
-public function tr<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return tr<S,A>(attributes, [child])
+public function tr<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return tr<S>(attributes, [child])
 
-public function tr<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function tr<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("tr",attributes,children)
 
 // td
-public function td<S,A>(Node<S,A> child) -> Node<S,A>:
-    return td<S,A>([id<S,A>("");0], [child])
+public function td<S>(Node<S> child) -> Node<S>:
+    return td<S>([id<S>("");0], [child])
 
-public function td<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return td<S,A>([id<S,A>("");0], children)
+public function td<S>(Node<S>[] children) -> Node<S>:
+    return td<S>([id<S>("");0], children)
 
-public function td<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return td<S,A>(attributes, [child])
+public function td<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return td<S>(attributes, [child])
 
-public function td<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function td<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("td",attributes,children)
 
 // thead
-public function thead<S,A>(Node<S,A> child) -> Node<S,A>:
-    return thead<S,A>([id<S,A>("");0], [child])
+public function thead<S>(Node<S> child) -> Node<S>:
+    return thead<S>([id<S>("");0], [child])
 
-public function thead<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return thead<S,A>([id<S,A>("");0], children)
+public function thead<S>(Node<S>[] children) -> Node<S>:
+    return thead<S>([id<S>("");0], children)
 
-public function thead<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return thead<S,A>(attributes, [child])
+public function thead<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return thead<S>(attributes, [child])
 
-public function thead<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function thead<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("thead",attributes,children)
 
 // tbody
-public function tbody<S,A>(Node<S,A> child) -> Node<S,A>:
-    return tbody<S,A>([id<S,A>("");0], [child])
+public function tbody<S>(Node<S> child) -> Node<S>:
+    return tbody<S>([id<S>("");0], [child])
 
-public function tbody<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return tbody<S,A>([id<S,A>("");0], children)
+public function tbody<S>(Node<S>[] children) -> Node<S>:
+    return tbody<S>([id<S>("");0], children)
 
-public function tbody<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return tbody<S,A>(attributes, [child])
+public function tbody<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return tbody<S>(attributes, [child])
 
-public function tbody<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function tbody<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("tbody",attributes,children)
 
 // tfoot
-public function tfoot<S,A>(Node<S,A> child) -> Node<S,A>:
-    return tfoot<S,A>([id<S,A>("");0], [child])
+public function tfoot<S>(Node<S> child) -> Node<S>:
+    return tfoot<S>([id<S>("");0], [child])
 
-public function tfoot<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return tfoot<S,A>([id<S,A>("");0], children)
+public function tfoot<S>(Node<S>[] children) -> Node<S>:
+    return tfoot<S>([id<S>("");0], children)
 
-public function tfoot<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return tfoot<S,A>(attributes, [child])
+public function tfoot<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return tfoot<S>(attributes, [child])
 
-public function tfoot<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function tfoot<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("tfoot",attributes,children)
 
 // col
-public function col<S,A>(Node<S,A> child) -> Node<S,A>:
-    return col<S,A>([id<S,A>("");0], [child])
+public function col<S>(Node<S> child) -> Node<S>:
+    return col<S>([id<S>("");0], [child])
 
-public function col<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return col<S,A>([id<S,A>("");0], children)
+public function col<S>(Node<S>[] children) -> Node<S>:
+    return col<S>([id<S>("");0], children)
 
-public function col<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return col<S,A>(attributes, [child])
+public function col<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return col<S>(attributes, [child])
 
-public function col<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function col<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("col",attributes,children)
 
 // colgroup
-public function colgroup<S,A>(Node<S,A> child) -> Node<S,A>:
-    return colgroup<S,A>([id<S,A>("");0], [child])
+public function colgroup<S>(Node<S> child) -> Node<S>:
+    return colgroup<S>([id<S>("");0], [child])
 
-public function colgroup<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return colgroup<S,A>([id<S,A>("");0], children)
+public function colgroup<S>(Node<S>[] children) -> Node<S>:
+    return colgroup<S>([id<S>("");0], children)
 
-public function colgroup<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return colgroup<S,A>(attributes, [child])
+public function colgroup<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return colgroup<S>(attributes, [child])
 
-public function colgroup<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function colgroup<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("colgroup",attributes,children)
 
 // ==================================================================
@@ -1198,146 +1200,146 @@ public function colgroup<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children)
 // style
 
 // div
-public function div<S,A>(Node<S,A> child) -> Node<S,A>:
-    return div<S,A>([id<S,A>("");0],[child])
+public function div<S>(Node<S> child) -> Node<S>:
+    return div<S>([id<S>("");0],[child])
 
-public function div<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return div<S,A>([id<S,A>("");0],children)
+public function div<S>(Node<S>[] children) -> Node<S>:
+    return div<S>([id<S>("");0],children)
 
-public function div<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return div<S,A>(attributes,[child])
+public function div<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return div<S>(attributes,[child])
 
-public function div<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function div<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("div",attributes,children)
 
 // span
-public function span<S,A>(Node<S,A> child) -> Node<S,A>:
-    return span<S,A>([id<S,A>("");0],[child])
+public function span<S>(Node<S> child) -> Node<S>:
+    return span<S>([id<S>("");0],[child])
 
-public function span<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return span<S,A>([id<S,A>("");0],children)
+public function span<S>(Node<S>[] children) -> Node<S>:
+    return span<S>([id<S>("");0],children)
 
-public function span<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return span<S,A>(attributes,[child])
+public function span<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return span<S>(attributes,[child])
 
-public function span<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function span<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("span",attributes,children)
 
 // header
-public function header<S,A>(Node<S,A> child) -> Node<S,A>:
-    return header<S,A>([id<S,A>("");0],[child])
+public function header<S>(Node<S> child) -> Node<S>:
+    return header<S>([id<S>("");0],[child])
 
-public function header<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return header<S,A>([id<S,A>("");0],children)
+public function header<S>(Node<S>[] children) -> Node<S>:
+    return header<S>([id<S>("");0],children)
 
-public function header<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return header<S,A>(attributes,[child])
+public function header<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return header<S>(attributes,[child])
 
-public function header<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function header<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("header",attributes,children)
 
 // footer
-public function footer<S,A>(Node<S,A> child) -> Node<S,A>:
-    return footer<S,A>([id<S,A>("");0],[child])
+public function footer<S>(Node<S> child) -> Node<S>:
+    return footer<S>([id<S>("");0],[child])
 
-public function footer<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return footer<S,A>([id<S,A>("");0],children)
+public function footer<S>(Node<S>[] children) -> Node<S>:
+    return footer<S>([id<S>("");0],children)
 
-public function footer<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return footer<S,A>(attributes,[child])
+public function footer<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return footer<S>(attributes,[child])
 
-public function footer<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function footer<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("footer",attributes,children)
 
 // main
-public function main<S,A>(Node<S,A> child) -> Node<S,A>:
-    return main<S,A>([id<S,A>("");0],[child])
+public function main<S>(Node<S> child) -> Node<S>:
+    return main<S>([id<S>("");0],[child])
 
-public function main<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return main<S,A>([id<S,A>("");0],children)
+public function main<S>(Node<S>[] children) -> Node<S>:
+    return main<S>([id<S>("");0],children)
 
-public function main<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return main<S,A>(attributes,[child])
+public function main<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return main<S>(attributes,[child])
 
-public function main<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function main<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("main",attributes,children)
 
 // section
-public function section<S,A>(Node<S,A> child) -> Node<S,A>:
-    return section<S,A>([id<S,A>("");0],[child])
+public function section<S>(Node<S> child) -> Node<S>:
+    return section<S>([id<S>("");0],[child])
 
-public function section<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return section<S,A>([id<S,A>("");0],children)
+public function section<S>(Node<S>[] children) -> Node<S>:
+    return section<S>([id<S>("");0],children)
 
-public function section<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return section<S,A>(attributes,[child])
+public function section<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return section<S>(attributes,[child])
 
-public function section<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function section<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("section",attributes,children)
 
 // article
-public function article<S,A>(Node<S,A> child) -> Node<S,A>:
-    return article<S,A>([id<S,A>("");0],[child])
+public function article<S>(Node<S> child) -> Node<S>:
+    return article<S>([id<S>("");0],[child])
 
-public function article<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return article<S,A>([id<S,A>("");0],children)
+public function article<S>(Node<S>[] children) -> Node<S>:
+    return article<S>([id<S>("");0],children)
 
-public function article<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return article<S,A>(attributes,[child])
+public function article<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return article<S>(attributes,[child])
 
-public function article<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function article<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("article",attributes,children)
 
 // aside
-public function aside<S,A>(Node<S,A> child) -> Node<S,A>:
-    return aside<S,A>([id<S,A>("");0],[child])
+public function aside<S>(Node<S> child) -> Node<S>:
+    return aside<S>([id<S>("");0],[child])
 
-public function aside<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return aside<S,A>([id<S,A>("");0],children)
+public function aside<S>(Node<S>[] children) -> Node<S>:
+    return aside<S>([id<S>("");0],children)
 
-public function aside<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return aside<S,A>(attributes,[child])
+public function aside<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return aside<S>(attributes,[child])
 
-public function aside<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function aside<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("aside",attributes,children)
 
 // details
-public function details<S,A>(Node<S,A> child) -> Node<S,A>:
-    return details<S,A>([id<S,A>("");0],[child])
+public function details<S>(Node<S> child) -> Node<S>:
+    return details<S>([id<S>("");0],[child])
 
-public function details<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return details<S,A>([id<S,A>("");0],children)
+public function details<S>(Node<S>[] children) -> Node<S>:
+    return details<S>([id<S>("");0],children)
 
-public function details<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return details<S,A>(attributes,[child])
+public function details<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return details<S>(attributes,[child])
 
-public function details<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function details<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("details",attributes,children)
 
 // dialog
-public function dialog<S,A>(Node<S,A> child) -> Node<S,A>:
-    return dialog<S,A>([id<S,A>("");0],[child])
+public function dialog<S>(Node<S> child) -> Node<S>:
+    return dialog<S>([id<S>("");0],[child])
 
-public function dialog<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return dialog<S,A>([id<S,A>("");0],children)
+public function dialog<S>(Node<S>[] children) -> Node<S>:
+    return dialog<S>([id<S>("");0],children)
 
-public function dialog<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return dialog<S,A>(attributes,[child])
+public function dialog<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return dialog<S>(attributes,[child])
 
-public function dialog<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function dialog<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("dialog",attributes,children)
 
 // summary
-public function summary<S,A>(Node<S,A> child) -> Node<S,A>:
-    return summary<S,A>([id<S,A>("");0],[child])
+public function summary<S>(Node<S> child) -> Node<S>:
+    return summary<S>([id<S>("");0],[child])
 
-public function summary<S,A>(Node<S,A>[] children) -> Node<S,A>:
-    return summary<S,A>([id<S,A>("");0],children)
+public function summary<S>(Node<S>[] children) -> Node<S>:
+    return summary<S>([id<S>("");0],children)
 
-public function summary<S,A>(Attribute<S,A>[] attributes, Node<S,A> child) -> Node<S,A>:
-    return summary<S,A>(attributes,[child])
+public function summary<S>(Attribute<S>[] attributes, Node<S> child) -> Node<S>:
+    return summary<S>(attributes,[child])
 
-public function summary<S,A>(Attribute<S,A>[] attributes, Node<S,A>[] children) -> Node<S,A>:
+public function summary<S>(Attribute<S>[] attributes, Node<S>[] children) -> Node<S>:
     return element("summary",attributes,children)
 
 // ========================================================

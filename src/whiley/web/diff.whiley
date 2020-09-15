@@ -32,38 +32,38 @@ import web::html
  * Observe that, if the right operation were not "null" then the
  * right-child would be removed.
  */
-public type NodeOperation<S,A> is Update<S,A> | Replace<S,A> | null
+public type NodeOperation<S> is Update<S> | Replace<S> | null
 
 /**
  * An operation for (partially) updating the contents of a given DOM
  * node.  There are two parts: firstly, update the attributes;
  * secondly, update the children as necessary.  
  */
-public type Update<S,A> is {
-    AttributeOperation<S,A>[] attributes,
-    NodeOperation<S,A>[] children
+public type Update<S> is {
+    AttributeOperation<S>[] attributes,
+    NodeOperation<S>[] children
 }
 
 /**
  * Replace an entire subtree with a given DOM node.  This is fairly
  * straightforward.
  */ 
-public type Replace<S,A> is { html::Node<S,A> node }
+public type Replace<S> is { html::Node<S> node }
 
 /**
  * Represents an operation on the style of a DOM node.  We're either
  * going to apply some attribute, or remove some existing attribute.
  */
-public type AttributeOperation<S,A> is null | {
-    (null|html::Attribute<S,A>) before,
-    (null|html::Attribute<S,A>) after
+public type AttributeOperation<S> is null | {
+    (null|html::Attribute<S>) before,
+    (null|html::Attribute<S>) after
 }
 
 /**
  * Construct the diff between virtual DOM trees, one representing the
  * state before and the other representing the state after.
  */
-public function create<S,A>(html::Node<S,A> before, html::Node<S,A> after) -> NodeOperation<S,A>:
+public function create<S>(html::Node<S> before, html::Node<S> after) -> NodeOperation<S>:
     if before == after:
         // No change!
         return null
@@ -72,18 +72,18 @@ public function create<S,A>(html::Node<S,A> before, html::Node<S,A> after) -> No
         return {node:after}
     else:
         // Diff children
-        NodeOperation<S,A>[] childOps = diff_children<S,A>(before.children,after.children)      
+        NodeOperation<S>[] childOps = diff_children<S>(before.children,after.children)      
         // Diff attributes
-        AttributeOperation<S,A>[] attrOps = diff_attributes<S,A>(before.attributes,after.attributes)
+        AttributeOperation<S>[] attrOps = diff_attributes<S>(before.attributes,after.attributes)
         // Done
         return {attributes:attrOps, children: childOps}
 
 /**
  * Construct appropriate diff of children between two nodes.
  */
-private function diff_children<S,A>(html::Node<S,A>[] bChildren, html::Node<S,A>[] aChildren ) -> (NodeOperation<S,A>[] rs):
+private function diff_children<S>(html::Node<S>[] bChildren, html::Node<S>[] aChildren ) -> (NodeOperation<S>[] rs):
     // Construct initial set of operations        
-    NodeOperation<S,A>[] operations = [null; |aChildren|]
+    NodeOperation<S>[] operations = [null; |aChildren|]
     //
     if |bChildren| < |aChildren|:
         // Update children in common
@@ -102,7 +102,7 @@ private function diff_children<S,A>(html::Node<S,A>[] bChildren, html::Node<S,A>
 /**
  * Construct appropriate set of operations for updating the attributes
  */
-private function diff_attributes<S,A>(html::Attribute<S,A>[] bAttributes, html::Attribute<S,A>[] aAttributes) -> (AttributeOperation<S,A>[] rs):
+private function diff_attributes<S>(html::Attribute<S>[] bAttributes, html::Attribute<S>[] aAttributes) -> (AttributeOperation<S>[] rs):
     // Determine common number of attributes
     int m = math::min(|bAttributes|,|aAttributes|)    
     // Include all existing attributes
@@ -110,11 +110,11 @@ private function diff_attributes<S,A>(html::Attribute<S,A>[] bAttributes, html::
     // Include any new attributes
     n = n + (|aAttributes| - m)
     // Create array to hold them all
-    AttributeOperation<S,A>[] ops = [{before:null,after:null}; n]
+    AttributeOperation<S>[] ops = [{before:null,after:null}; n]
     // Apply replacements    
     for i in 0..m:
-        html::Attribute<S,A> b = bAttributes[i]
-        html::Attribute<S,A> a = aAttributes[i]
+        html::Attribute<S> b = bAttributes[i]
+        html::Attribute<S> a = aAttributes[i]
         //
         if b != a:
             ops[i] = {before:b,after:a}
@@ -122,11 +122,11 @@ private function diff_attributes<S,A>(html::Attribute<S,A>[] bAttributes, html::
             ops[i] = null
     // Apply removals
     for i in m .. |bAttributes|:
-        html::Attribute<S,A> b = bAttributes[i]    
+        html::Attribute<S> b = bAttributes[i]    
         ops[i+m] = {before: b, after: null}
     // Apply additions
     for i in m .. |aAttributes|:
-        html::Attribute<S,A> a = bAttributes[i]    
+        html::Attribute<S> a = bAttributes[i]    
         ops[i+|bAttributes|] = {before: null, after: a}
     // Done
     return ops

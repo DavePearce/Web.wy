@@ -5,28 +5,18 @@ import string from js::core
 import w3c::dom
 import w3c::ajax with XMLHttpRequest, newXMLHttpRequest, DONE
 import web::html
-import web::app
+import web::app with State
 
 // ==========================================================
-// Aliases
+// Application Bundle
 // ==========================================================
 
-public type State<S> is app::State<S,Action<S> >
-
-/**
- * Binds app to I/O Actions
- */
-public type App<S> is app::App<S,Action<S> >
-
-/**
- * Binds a dom Node to I/O Actions
- */
-public type Node<S> is html::Node<S,Action<S> >
-
-/**
- * Binds a dom Node to I/O Elements
- */
-public type Element<S> is html::Element<S,Action<S> >
+public type App<S> is {
+    // Current application state
+    S model,
+    // View transformer
+    function view(S)->html::Node<S>
+}
 
 // ==========================================================
 // Event Handlers
@@ -46,7 +36,12 @@ public type handler<S> is function(S)->(S,Action<S>[])
 public type consumer<S,T> is function(S, T)->(S,Action<S>[])
 
 /**
- * Type of methods which consume come value
+ * Handler for querying dom elements.
+ */
+public type query<S,T> is method(S)->T
+
+/**
+ * Type of methods which consume some value
  */
 type meth_t<T> is method(T)
 
@@ -56,141 +51,22 @@ type meth_t<T> is method(T)
 type meth_vt is method()
 
 // ==========================================================
-// HTPP Actions
+// Action
 // ==========================================================
 
 /**
- * Provides a standard set of I/O actions.
+ * An external action is something which occurs entirely outside the
+ * appliction model, and may (or may not) feed back into it.  For
+ * example, generating an alert message or making an HTTP request are
+ * external actions.  Actions can be both synchronouse and
+ * asynchronous, with the latter resulting in delayed feedback into
+ * the model.
  */
-public type Action<S> is Get<S> |
-    Post<S> |
-    Alert |
-    Timeout<S> |
-    Interval<S>
-
-/**
- * Represents an HTTP Get action
- */
-public type Get<S> is {
-    // Target URL for request
-    string url,
-    // Handler called on OK
-    consumer<S,string> ok,
-    // Handler called otherwise
-    handler<S> error
+public type Action<S> is {
+    // Apply a given action to the current state, producing zero or
+    // more follow-on actions.    
+    method(&State<S>)->(Action<S>[]) apply
 }
- 
-/**
- * Represents an HTTP Post action
- */
-public type Post<S> is {
-    // Target URL for request
-    string url,
-    // Payload to be sent
-    string payload,
-    // Handler called on OK
-    consumer<S,string> ok,
-    // Handler called otherwise
-    handler<S> error
-}
-
-/**
- * Process GET action.
- */
-method process_request<S>(&State<S> st, Get<S> action):
-    // Bind response handlers
-    meth_t<string> ok = &(string s -> consume_event(s,st,action.ok))
-    meth_t<int> err = &(int i -> process_event(st,action.error))
-    // Finally begin GET request
-    get(action.url, ok, err)
-    
-/**
- * Process POST action.
- */
-method process_request<S>(&State<S> st, Post<S> action):
-    // Bind response handlers
-    meth_t<string> ok = &(string s -> consume_event(s,st,action.ok))
-    meth_t<int> err = &(int i -> process_event(st,action.error))
-    // Finally begin POST request
-    post(action.url, action.payload, ok, err)
-
-// ==========================================================
-// Timer Actions
-// ==========================================================
-
-/**
- * Represents a call to setTimeout()
- */
-public type Timeout<S> is {
-    // Timeout in ms
-    uint timeout,
-    // Handler to be called on timeout
-    handler<S> handler
-}
-
-/**
- * Represents a call to setTimeout()
- */
-public type Interval<S> is {
-    // Timeout in ms
-    uint interval,
-    // Handler to be called on timeout
-    handler<S> handler
-}
-
-/**
- * Construct a timeout action.
- */
-public function timeout<S>(uint timeout, handler<S> handler) -> Timeout<S>:
-    return {timeout: timeout, handler: handler}
-
-/**
- * Construct an interval action.
- */
-public function interval<S>(uint interval, handler<S> handler) -> Interval<S>:
-    return {interval: interval, handler: handler}
-
-/**
- * Process alert action.
- */
-method process_timeout<S>(&State<S> st, Timeout<S> action):
-    meth_vt m = &( -> process_event(st,action.handler))
-    st->window->setTimeout(m,action.timeout)    
-
-/**
- * Process interval action.
- */
-method process_interval<S>(&State<S> st, Interval<S> action):
-    meth_vt m = &( -> process_event(st,action.handler))
-    st->window->setInterval(m,action.interval)    
-
-// ==========================================================
-// Other Actions
-// ==========================================================
-
-/**
- * Represents a call to alert()
- */
-public type Alert is {
-    // Alert message
-    string message
-}
-
-/**
- * Construct an alert message action.
- */
-public function alert(string message) -> Alert:
-    return {message: message}
-
-/**
- * Process Alert action.
- */
-method process_alert<S>(&State<S> st, Alert action):
-    st->window->alert(action.message)
-
-// ==========================================================
-// Action Processor
-// ==========================================================
 
 /**
  * Process Input / Output actions.  For example, begin any HTTP
@@ -198,16 +74,155 @@ method process_alert<S>(&State<S> st, Alert action):
  */
 public method processor<S>(&State<S> st, Action<S> action):
     //
-    if action is Get<S>:
-        process_request<S>(st,action)
-    else if action is Post<S>:
-        process_request<S>(st,action)
-    else if action is Alert:
-        process_alert<S>(st,action)    
-    else if action is Timeout<S>:
-        process_timeout<S>(st,action)
-    else:
-        process_interval<S>(st,action)
+    Action<S>[] actions = action.apply(st)
+    // Process any actions arising
+    for i in 0..|actions|:
+        processor(st, actions[i])
+
+// ==========================================================
+// Standard Actions
+// ==========================================================
+
+/**
+ * Represents a call to window->alert(), resulting in an alert
+ * message being triggered outside of the application model.
+ */
+public function alert<S>(string message) -> Action<S>:
+    return Action{apply: &(&State<S> st -> st->window->alert(message))}
+
+/**
+ * Call a method on the current window without producing any thing to
+ * feed the result back into the model.
+ */
+public function call<S>(method(dom::Window) call) -> Action<S>:
+    return Action{apply: &(&State<S> st -> call(st->window))}
+
+/**
+ * Represents an asynchronous GET request to a given URL.
+ */
+public function get<S>(string url, consumer<S,string> ok, handler<S> error) -> Action<S>:
+    return Action{apply: &(&State<S> st -> apply_get(st,url,ok,error))}
+
+/**
+ * Represents a call to window->setInterval(), resulting in a timeout
+ * being registered for the given handler.
+ */
+public function interval<S>(uint timeout, handler<S> handler) -> Action<S>:
+    return Action{apply: &(&State<S> st -> apply_interval(st,timeout,handler))}
+
+/**
+ * Represents an asynchronous POST request to a given URL.
+ */
+public function post<S>(string url, string payload, consumer<S,string> ok, handler<S> error) -> Action<S>:
+    return Action{apply: &(&State<S> st -> apply_post(st,url,payload,ok,error))}
+
+/**
+ * Represents a call to window->setTimeout(), resulting in a timeout
+ * being registered for the given handler.
+ */
+public function timeout<S>(uint timeout, handler<S> handler) -> Action<S>:
+    return Action{apply: &(&State<S> st -> apply_timeout(st,timeout,handler))}
+
+/**
+ * Query an external DOM element, and feed the result back into the
+ * model.  More specifically, the DOM element is looked up in the
+ * current window using the given id, and passed to the query.  This
+ * produces some kind of result which is fed back into the model
+ * synchronously via a consumer.
+ */
+public function query<S,T>(string id, query<dom::Element,T> query, consumer<S,T> consumer) -> Action<S>:
+    return Action{apply: &(&State<S> st -> apply_query(st,id,query,consumer))}
+
+/**
+ * Query the current window, and feed the result back into the model.
+ * More specifically, the enclosing Window is passed to the query
+ * method.  This produces some kind of result which is fed back into
+ * the model synchronously via a consumer.
+ */
+public function query<S,T>(query<dom::Window,T> query, consumer<S,T> consumer) -> Action<S>:
+    return Action{apply: &(&State<S> st -> apply_query(st,query,consumer))}
+
+// ==========================================================
+// Helpers
+// ==========================================================
+
+/**
+ * Action an asynchronous GET request using the low-level AJAX API.
+ * Depending on the outcome, one of the two handlers will be called.
+ */
+method apply_get<S>(&State<S> st, string url, consumer<S,string> ok, handler<S> error) -> Action<S>[]:
+     meth_t<string> mok = &(string s -> consume_event(s,st,ok))
+     meth_t<int> merr = &(int i -> process_event(st,error))
+     // Finally begin GET request
+     begin_get(url, mok, merr)
+     // Done
+     return []
+
+/**
+ * Action a call to window->setInterval().
+ */
+method apply_interval<S>(&State<S> st, uint interval, handler<S> handler) -> Action<S>[]:
+    // Construct method handler
+    meth_vt m = &( -> process_event(st,handler))
+    // Register timeout handler
+    st->window->setInterval(m,interval)
+    // Done
+    return []
+
+/**
+ * Action an asynchronous POST request using the low-level AJAX API.
+ * Depending on the outcome, one of the two handlers will be called.
+ */
+method apply_post<S>(&State<S> st, string url, string payload, consumer<S,string> ok, handler<S> error) -> Action<S>[]:
+     meth_t<string> mok = &(string s -> consume_event(s,st,ok))
+     meth_t<int> merr = &(int i -> process_event(st,error))
+     // Finally begin POST request
+     begin_post(url, payload, mok, merr)
+     // Done
+     return []
+
+/**
+ * Action a call to window->setTimeout().
+ */
+method apply_timeout<S>(&State<S> st, uint timeout, handler<S> handler) -> Action<S>[]:
+    // Construct method handler
+    meth_vt m = &( -> process_event(st,handler))
+    // Register timeout handler
+    st->window->setTimeout(m,timeout)
+    // Done
+    return []
+
+/**
+ * Action a synchronous query on a given DOM element.  Since this is a
+ * synchronous event, no need to refresh display as this is already
+ * scheduled once action processing is complete.
+ */
+method apply_query<S,T>(&State<S> st, string id, query<dom::Element,T> query, consumer<S,T> consumer) -> Action<S>[]:
+    // Find element to be queried
+    dom::Element e = st->window->document->getElementById(id)
+    // Perform query, producing some kind of response
+    T response = query(e)
+    // Feed response back into model
+    (S m, Action<S>[] as) = consumer(st->app.model,response)
+    // Apply model update
+    st->app.model = m
+    // Done.
+    return as
+
+/**
+ * Action a synchronous query on the current window.  Since this is a
+ * synchronous event, no need to refresh display as this is already
+ * scheduled once action processing is complete.
+ */
+method apply_query<S,T>(&State<S> st, query<dom::Window,T> query, consumer<S,T> consumer) -> Action<S>[]:
+    // Perform query, producing some kind of response
+    T response = query(st->window)
+    // Feed response back into model
+    (S m, Action<S>[] as) = consumer(st->app.model,response)
+    // Apply model update
+    st->app.model = m
+    // Done.
+    return as
 
 /**
  * Process a generic event.  This applies the given handler to the
@@ -222,7 +237,8 @@ method process_event<S>(&State<S> st, handler<S> fn):
     // Process any actions arising
     for i in 0..|as|:
         processor(st, as[i])
-    // Done
+    // Refresh display
+    app::refresh(st)
 
 /**
  * Process a given event which consumes some data.  This applies the
@@ -238,14 +254,15 @@ method consume_event<S,T>(T response, &State<S> st, consumer<S,T> fn):
     // Process any actions arising
     for i in 0..|as|:
         processor(st, as[i])
-    // Done
+    // Refresh display
+    app::refresh(st)
 
 // ==========================================================
 // Low-level AJAX API
 // ==========================================================
 final int HTTP_OK = 200
 
-method get(string url, method(string) success, method(int) error):
+method begin_get(string url, method(string) success, method(int) error):
     // Construct a new request
     XMLHttpRequest xhttp = newXMLHttpRequest()
     // Configure an async get request
@@ -255,7 +272,11 @@ method get(string url, method(string) success, method(int) error):
     // Send the request!
     xhttp->send("")
 
-method post(string url, string data, method(string) success, method(int) error):
+/**
+ * Action an asynchronous POST request using the low-level AJAX API.
+ * Depending on the outcome, one of the two handlers will be called.
+ */
+method begin_post(string url, string data, method(string) success, method(int) error):
     // Construct a new request
     XMLHttpRequest xhttp = newXMLHttpRequest()
     // Configure an async get request
@@ -267,6 +288,9 @@ method post(string url, string data, method(string) success, method(int) error):
     // Send the request!
     xhttp->send(data)
 
+/**
+ * Handle response from either a GET or POST query.
+ */
 method response_handler(XMLHttpRequest xhttp, method(string) success, method(int) error):
     if xhttp->readyState == DONE:
         // Extract status code
