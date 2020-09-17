@@ -13,4 +13,4 @@ source="src/whiley"
 includes=["src/js/**/*.js"]
 
 [dependencies]
-dom="0.2.0"
+dom="0.2.1"

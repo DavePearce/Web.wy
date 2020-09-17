@@ -213,7 +213,7 @@ method set_attribute<S>(dom::Element element, html::Attribute<S> attr, &State<S>
 method clear_attribute<S>(dom::Element element, html::Attribute<S> attr, &State<S> st):
     // Dispatch on attribute type
     if attr is html::TextAttribute:
-        element->setAttribute(attr.key,"")                
+        element->removeAttribute(attr.key)                
     else if attr is html::MouseEventAttribute<S>:
         // Clear mouse event listener
         clearEventListener(element,attr.mouseEvent)
