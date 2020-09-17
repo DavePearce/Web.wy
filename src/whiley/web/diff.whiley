@@ -126,7 +126,7 @@ private function diff_attributes<S>(html::Attribute<S>[] bAttributes, html::Attr
         ops[i+m] = {before: b, after: null}
     // Apply additions
     for i in m .. |aAttributes|:
-        html::Attribute<S> a = bAttributes[i]    
+        html::Attribute<S> a = aAttributes[i]    
         ops[i+|bAttributes|] = {before: null, after: a}
     // Done
     return ops
