@@ -88,7 +88,7 @@ public method processor<S>(&State<S> st, Action<S> action):
  * message being triggered outside of the application model.
  */
 public function alert<S>(string message) -> Action<S>:
-    return Action{apply: &(&State<S> st -> st->window->alert(message))}
+    return Action{apply: &(&State<S> st -> apply_alert(st->window,message))}
 
 /**
  * Call a method on the current window without producing any thing to
@@ -145,6 +145,10 @@ public function query<S,T>(query<dom::Window,T> query, consumer<S,T> consumer) -
 // ==========================================================
 // Helpers
 // ==========================================================
+
+method apply_alert<S>(dom::Window window,string message) -> Action<S>[]:
+    window->alert(message)
+    return []
 
 /**
  * Action an asynchronous GET request using the low-level AJAX API.
