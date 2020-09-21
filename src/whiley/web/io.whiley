@@ -95,7 +95,7 @@ public function alert<S>(string message) -> Action<S>:
  * feed the result back into the model.
  */
 public function call<S>(method(dom::Window) call) -> Action<S>:
-    return Action{apply: &(&State<S> st -> call(st->window))}
+    return Action{apply: &(&State<S> st -> apply_call(st,call))}
 
 /**
  * Represents an asynchronous GET request to a given URL.
@@ -148,6 +148,17 @@ public function query<S,T>(query<dom::Window,T> query, consumer<S,T> consumer) -
 
 method apply_alert<S>(dom::Window window,string message) -> Action<S>[]:
     window->alert(message)
+    return []
+
+/**
+ * Action a synchronous call on the current window.  Since this is a
+ * synchronous event, no need to refresh display as this is already
+ * scheduled once action processing is complete.
+ */
+method apply_call<S>(&State<S> st, method(dom::Window) call) -> Action<S>[]:
+    // Perform invocation
+    call(st->window)
+    // Done.
     return []
 
 /**
