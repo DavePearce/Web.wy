@@ -5,6 +5,7 @@ version="0.3.2"
 
 [build]
 platforms=["whiley","js"]
+library=true
 
 [build.whiley]
 source="src/whiley"
