@@ -88,7 +88,7 @@ public method processor<S>(&State<S> st, Action<S> action):
  * message being triggered outside of the application model.
  */
 public function alert<S>(string message) -> Action<S>:
-    return Action{apply: &(&State<S> st -> apply_alert(st->window,message))}
+    return Action{apply: &(&State<S> st -> apply_alert<S>(st->window,message))}
 
 /**
  * Call a method on the current window without producing any thing to
