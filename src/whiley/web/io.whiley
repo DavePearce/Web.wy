@@ -1,6 +1,6 @@
 package web
 
-import u16,uint from std::integer
+import u16,uint from std::int
 import string from js::core
 import w3c::dom
 import w3c::ajax with XMLHttpRequest, newXMLHttpRequest, DONE
